@@ -22,4 +22,4 @@ For local development clone this repository into src/Subugoe/CounterBundle. A Co
 
 ## License
 
-This project is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE - see the [LICENSE.md](LICENSE) file for details
