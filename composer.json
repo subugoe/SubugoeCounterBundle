@@ -1,0 +1,17 @@
+{
+    "name": "subugoe/counter-bundle",
+    "description": "Symfony COUNTER bundle",
+    "license": "AGPL-3.0",
+    "authors": [
+        {
+            "name": "Ali Reza Sajedi",
+            "email": "sajedi@sub.uni-goettingen.de"
+        }
+    ],
+    "autoload": {
+       "psr-4": { "Subugoe\\CounterBundle\\": "" }
+    },
+    "require": {
+        "mewesk/twig-excel-bundle": "^2.1"
+    }
+}

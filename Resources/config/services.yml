@@ -1,0 +1,4 @@
+services:
+#    subugoe_counter.example:
+#        class: Subugoe\CounterBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

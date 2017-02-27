@@ -1,0 +1,3 @@
+subugoe_counter_homepage:
+    path:     /counter
+    defaults: { _controller: SubugoeCounterBundle:Default }
