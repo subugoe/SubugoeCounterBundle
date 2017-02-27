@@ -18,4 +18,4 @@ mkdir src/Subugoe
 
 cd Subugoe
 
-git clone git@github.com:subugoe/SubugoeCounterBundle.git CounterBundle
+git clone git\@github.com:subugoe/SubugoeCounterBundle.git CounterBundle
