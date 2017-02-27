@@ -19,3 +19,7 @@ For local development clone this repository into src/Subugoe/CounterBundle. A Co
 ```cd Subugoe```
 
 ```git clone git@github.com:subugoe/SubugoeCounterBundle.git CounterBundle```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
