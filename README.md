@@ -14,8 +14,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 For local development clone this repository into src/Subugoe/CounterBundle. A CounterBundle installed by composer in vendor/subugoe needs to be removed.
 
-mkdir src/Subugoe
+```mkdir src/Subugoe```
 
-cd Subugoe
+```cd Subugoe```
 
-git clone git\@github.com:subugoe/SubugoeCounterBundle.git CounterBundle
+```git clone git@github.com:subugoe/SubugoeCounterBundle.git CounterBundle```
