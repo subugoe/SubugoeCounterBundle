@@ -33,6 +33,13 @@ class ReportService
      */
     protected $client;
 
+    /**
+     * @var
+     */
+    protected $templating;
+
+    const REPORT_FORMAT = 'xls';
+
     const BOOK_REPORT_1 = 'bookReport1';
 
     const DATABASE_REPORT_1 = 'databaseReport1';
@@ -70,6 +77,7 @@ class ReportService
         $this->request = $request;
         $this->container = $container;
         $this->client = $client;
+        $this->templating = $container->get('templating');
     }
 
     /**
@@ -524,11 +532,146 @@ class ReportService
     public function getUserIdentifier()
     {
         $clientIp = $this->request->getMasterRequest()->getClientIp();
-        $clientIp = '143.93.144.1';
         $userRepository = $this->doctrine->getRepository('Subugoe\CounterBundle\Entity\User');
         $user = $userRepository->getUserIdentifier(ip2long($clientIp));
         $identifier = $user['identifier'];
 
         return $identifier;
+    }
+
+    /*
+     * Informs the Admin of the start of report service via e-mail
+     */
+    public function informAdminStart()
+    {
+        $reportingStartSubject = $this->container->getParameter('reporting_start_subject');
+        $reportingStartBody = $this->container->getParameter('reporting_start_body');
+        $fromAdmin = $this->container->getParameter('admin_nlh_email');
+        $toAdmin = $this->container->getParameter('admin_nlh_email');
+
+        $adminMessageStart = \Swift_Message::newInstance();
+        $adminMessageStart->setSubject($reportingStartSubject);
+        $adminMessageStart->setFrom($fromAdmin);
+        $adminMessageStart->setTo($toAdmin);
+        $adminMessageStart->setBody($reportingStartBody.' '.date('d.m-Y H:i:s'));
+        $this->container->get('mailer')->send($adminMessageStart);
+    }
+
+    /*
+     * Informs the Admin of the end of report service via e-mail
+     *
+     * @param string $customersInformed The e-mail body
+     * @param integer $si The number of users informed
+     *
+     */
+    public function informAdminEnd($customersInformed, $i)
+    {
+        $reportingEndSubject = $this->container->getParameter('reporting_end_subject');
+        $reportingEndBody = $this->container->getParameter('reporting_end_body');
+        $numberOfReportsSent = $this->container->getParameter('number_of_reports_sent');
+        $fromAdmin = $this->container->getParameter('admin_nlh_email');
+        $toAdmin = $this->container->getParameter('admin_nlh_email');
+
+        $adminMessageEnd = \Swift_Message::newInstance();
+        $adminMessageEnd->setSubject($reportingEndSubject);
+        $adminMessageEnd->setFrom($fromAdmin);
+        $adminMessageEnd->setTo($toAdmin);
+        $adminMessageEnd->setBody($reportingEndBody.' '.date('d.m-Y H:i:s')."\r\n\r\n ".$numberOfReportsSent." ".$i."\r\n\r\n".$customersInformed);
+        $this->container->get('mailer')->send($adminMessageEnd);
+    }
+
+    /*
+     * Dispatches the generated reports via e-mail
+     *
+     * @param string $toAdmin The receiver e-mail address
+     * @param string $databaseReport1FileTarget The path to Database Report 1
+     * @param string $platformReport1FileTarget The path to Platform Report 1
+     */
+    public function dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget)
+    {
+        $reportSubject = $this->container->getParameter('report_subject');
+        $reportBody = $this->container->getParameter('report_body');
+        $fromAdmin = $this->container->getParameter('admin_nlh_email');
+
+        $message = \Swift_Message::newInstance();
+        $message->setSubject($reportSubject.' '.date('m-Y', strtotime('- 1 month')));
+        $message->setFrom($fromAdmin);
+        $message->setTo($toUser);
+        $message->setBody($this->templating->render('SubugoeCounterBundle:reports:emailbody.html.twig', ['reportBody' => $reportBody]), 'text/html');
+        $message->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
+        $message->attach(\Swift_Attachment::fromPath($platformReport1FileTarget));
+        $this->container->get('mailer')->send($message);
+    }
+
+    /*
+     * Generates Database Report  1
+     *
+     * @param string $userIdentifier The user identifier
+     * @param string $reportsDir The reports dir
+     * @param array $data The user specific tracked data for Database Report 1
+     * @param array $reportingPeriod The reporting period
+     *
+     * @return string $databaseReport1FileTarget The path to Database Report 1 file
+     */
+    public function generateDatabaseReport1($userIdentifier, $reportsDir, $data, $reportingPeriod)
+    {
+        $collections = $this->container->getParameter('counter_collections');
+        $publisherArr = array_combine(array_column($collections, 'id'), array_column($collections, 'publisher'));
+        $fulltitleArr = array_combine(array_column($collections, 'id'), array_column($collections, 'full_title'));
+        $platform = $this->container->getParameter('nlh_platform');
+        $fs = $this->container->get('filesystem');
+        $databaseReport1FileName = self::DATABASE_REPORT_1.'_'.$userIdentifier.'.'.self::REPORT_FORMAT;
+        $databaseReport1FileTarget = $reportsDir.$databaseReport1FileName;
+        $fs->dumpFile(
+                $databaseReport1FileTarget,
+                $this->templating->render(
+                        'SubugoeCounterBundle:reports:databasereport1.xls.twig',
+                        [
+                                'databaseReport1' => $data,
+                                'customer' => key($data),
+                                'customerIdentifier' => $userIdentifier,
+                                'publisherArr' => $publisherArr,
+                                'fulltitleArr' => $fulltitleArr,
+                                'reportingPeriod' => $reportingPeriod,
+                                'platform' => $platform,
+                        ]
+                )
+        );
+
+        return $databaseReport1FileTarget;
+    }
+
+    /*
+     * Generates Platform Report  1
+     *
+     * @param string $userIdentifier The user identifier
+     * @param string $reportsDir The reports dir
+     * @param string $user The user name
+     * @param array $platformReport1data The user specific tracked data for Platform Report 1
+     * @param array $reportingPeriod The reporting period
+     *
+     * @return string $platformReport1FileTarget The path to Platform Report 1 file
+     */
+    public function generatePlatformReport1($userIdentifier, $reportsDir, $user, $platformReport1data, $reportingPeriod)
+    {
+        $fs = $this->container->get('filesystem');
+        $platform = $this->container->getParameter('nlh_platform');
+        $platformReport1FileName1 = self::PLATFORM_REPORT_1.'_'.$userIdentifier.'.'.self::REPORT_FORMAT;
+        $platformReport1FileTarget = $reportsDir.$platformReport1FileName1;
+        $fs->dumpFile(
+                $platformReport1FileTarget,
+                $this->templating->render(
+                        'SubugoeCounterBundle:reports:platformreport1.xls.twig',
+                        [
+                                'platformreport1' => $platformReport1data,
+                                'customer' => $user,
+                                'customerIdentifier' => $userIdentifier,
+                                'reportingPeriod' => $reportingPeriod,
+                                'platform' => $platform,
+                        ]
+                )
+        );
+
+        return $platformReport1FileTarget;
     }
 }
