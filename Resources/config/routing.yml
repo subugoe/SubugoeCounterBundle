@@ -1,3 +1,17 @@
 subugoe_counter_homepage:
-    path:     /counter
-    defaults: { _controller: SubugoeCounterBundle:Default }
+    path:     /
+    defaults: { _controller: SubugoeCounterBundle:Default:index }
+
+subugoe_counter_report:
+    path:     /report.{_format}
+    defaults: { _controller: SubugoeCounterBundle:Default:report, _format: "xls" }
+
+subugoe_counter_pr1:
+    path:     /pr1/{identifier}/{period}
+    methods:   "GET"
+    defaults: { _controller: SubugoeCounterBundle:Default:platformReport1 }
+
+subugoe_counter_dbr1:
+    path:     /dbr1/{identifier}/{period}
+    methods:   "GET"
+    defaults: { _controller: SubugoeCounterBundle:Default:databaseReport1 }
