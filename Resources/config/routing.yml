@@ -1,17 +1,22 @@
 subugoe_counter_homepage:
-    path:     /
-    defaults: { _controller: SubugoeCounterBundle:Default:index }
+    path:     /r5
+    defaults: { _controller: SubugoeCounterBundle:SUSHI:index }
+
+subugoe_counter_GetReport:
+    path:     /r5/reports
+    methods:   "GET"
+    defaults: { _controller: SubugoeCounterBundle:SUSHI:reports }
+
+subugoe_counter_pr1:
+    path:     /r5/pr1
+    methods:   "GET"
+    defaults: { _controller: SubugoeCounterBundle:SUSHI:platformReport1 }
+
+subugoe_counter_dr1:
+    path:     /r5/dr1
+    methods:   "GET"
+    defaults: { _controller: SubugoeCounterBundle:SUSHI:databaseReport1 }
 
 subugoe_counter_report:
     path:     /report.{_format}
-    defaults: { _controller: SubugoeCounterBundle:Default:report, _format: "xls" }
-
-subugoe_counter_pr1:
-    path:     /pr1/{identifier}/{period}
-    methods:   "GET"
-    defaults: { _controller: SubugoeCounterBundle:Default:platformReport1 }
-
-subugoe_counter_dbr1:
-    path:     /dbr1/{identifier}/{period}
-    methods:   "GET"
-    defaults: { _controller: SubugoeCounterBundle:Default:databaseReport1 }
+    defaults: { _controller: SubugoeCounterBundle:Default:reportGeneratingAndDispatching, _format: "xls" }

@@ -22,22 +22,47 @@ class SubugoeCounterExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $container->setParameter('piwik_idsite', $config['piwik_idsite']);
-        $container->setParameter('piwik_token_auth', $config['piwik_token_auth']);
         $container->setParameter('reports_dir', $config['reports_dir']);
-        $container->setParameter('admin_nlh_email', $config['admin_nlh_email']);
-        $container->setParameter('nlh_platform', $config['nlh_platform']);
-        $container->setParameter('report_subject', $config['report_subject']);
-        $container->setParameter('report_body', $config['report_body']);
-        $container->setParameter('reporting_start_subject', $config['reporting_start_subject']);
-        $container->setParameter('reporting_start_body', $config['reporting_start_body']);
-        $container->setParameter('reporting_end_subject', $config['reporting_end_subject']);
-        $container->setParameter('reporting_end_body', $config['reporting_end_body']);
-        $container->setParameter('number_of_reports_sent', $config['number_of_reports_sent']);
-        $container->setParameter('counter_collections', $config['counter_collections']);
+        $container->setParameter('document_fields', $config['document_fields']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $reportServiceDefintion = $container->getDefinition('subugoe_counter.report_service');
+        $reportServiceDefintion->addMethodCall('setConfig', [
+                $config['piwik_idsite'],
+                $config['piwik_token_auth'],
+                $config['platform'],
+                $config['counter_collections'],
+        ]
+        );
+
+        $reportServiceDefintion = $container->getDefinition('subugoe_counter.mail_service');
+        $reportServiceDefintion->addMethodCall('setConfig', [
+                $config['admin_email'],
+                $config['report_subject'],
+                $config['report_body'],
+                $config['reporting_start_subject'],
+                $config['reporting_start_body'],
+                $config['reporting_end_subject'],
+                $config['reporting_end_body'],
+                $config['number_of_reports_sent'],
+        ]
+        );
+
+        $trackingListenerDefintion = $container->getDefinition('subugoe_counter.tracking_listener');
+        $trackingListenerDefintion->addMethodCall('setConfig', [
+                $config['piwik_idsite'],
+                $config['piwik_token_auth'],
+                $config['document_fields'],
+                $config['piwiktracker_baseurl'],
+                $config['doc_type_monograph'],
+                $config['doc_type_periodical'],
+                $config['exclude_ips'],
+        ]
+        );
+
+
     }
 
     public function getAlias()

@@ -8,47 +8,34 @@ use Symfony\Component\HttpFoundation\Response;
 class DefaultController extends Controller
 {
     /*
-     * Homepage of COUNTER Reports
+     * @var string The label for Regular Searches as per COUNTER definitions
      */
-    public function indexAction()
-    {
-        return $this->render('SubugoeCounterBundle:Default:index.html.twig');
-    }
+    const REGULAR_SEARCHES = 'Regular Searches';
 
     /*
-     * Returns Platform Report 1 in json format
-     *
-     * @param string $identifier The user identifier
-     * @param string $period The report period
-     *
-     * @return array $platformReport1 The Platform Report 1
+     * @var string The label for federated/automated Searches as per COUNTER definitions
      */
-    public function platformReport1Action(string $identifier, string $period): Response
-    {
-        $platformReport1 = $this->get('report_service')->getPlatformReport1Data($identifier, $period);
-
-        return $this->json($platformReport1);
-    }
+    const FEDERATED_AUTOMATED_SEARCHES = 'Searches-federated and automated';
 
     /*
-     * Returns Database Report 1 in json format
-     *
-     * @param string $identifier The user identifier
-     * @param string $period The report period
-     *
-     * @return array $databaseReport1 The Database Report 1
+     * @var string The label for Record Views Searches as per COUNTER definitions
      */
-    public function databaseReport1Action(string $identifier, string $period): Response
-    {
-        $databaseReport1 = $this->get('report_service')->getDatabaseReport1Data($identifier, $period);
+    const RECORD_VIEWS = 'Record Views';
 
-        return $this->json($databaseReport1);
-    }
+    /*
+     * @var string The label for Result Clicks Searches as per COUNTER definitions
+     */
+    const RESULT_CLICKS = 'Result Clicks';
+
+    /*
+     * @var array An array containing matches to tracking abbreviation in Piwik database
+     */
+    protected $counterTerms = ['RS' => [0, self::REGULAR_SEARCHES, 'Searches'], 'SFA' => [1, self::FEDERATED_AUTOMATED_SEARCHES, 'Searches'], 'RV' => [2, self::RECORD_VIEWS, 'Requests'], 'RC' => [3, self::RESULT_CLICKS, 'Requests']];
 
     /*
      * Generates and dispatch Database Report 1 and Platform Report 1
      */
-    public function reportAction(): Response
+    public function reportGeneratingAndDispatchingAction(): Response
     {
         $reportsDir = $this->getParameter('reports_dir');
         $fs = $this->get('filesystem');
@@ -59,12 +46,13 @@ class DefaultController extends Controller
             $fs->mkdir($reportsDir);
         }
 
-        $reportService = $this->get('report_service');
+        $reportService = $this->get('subugoe_counter.report_service');
+        $mailService = $this->get('subugoe_counter.mail_service');
 
         list($databaseReport1Data, $platformReport1data, $reportingPeriod) = $reportService->reportService();
 
         // Informs NLH in charge of the start of reporting service
-        $reportService->informAdminStart();
+        $mailService->informAdminStart();
 
         $i = 0;
         $customersInformed = '';
@@ -78,20 +66,14 @@ class DefaultController extends Controller
                 $platformReport1FileTarget = $reportService->generatePlatformReport1($userIdentifier, $reportsDir, key($data), $platformReport1data[$userIdentifier], $reportingPeriod);
                 $repository = $this->getDoctrine()->getRepository('SubugoeCounterBundle:User');
                 $toUser = $repository->findOneByIdentifier($userIdentifier)->getEmail();
-                $reportService->dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget);
+                $mailService->dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget);
 
                 $customersInformed .= ++$i.'. '.key($data)."\r\n\r\n";
             }
         }
 
         // Informs NLH in charge of the end of reporting service
-        $reportService->informAdminEnd($customersInformed, $i);
-
-        $transport = $this->get('mailer')->getTransport();
-        $spool = $transport->getSpool();
-        $spool->flushQueue($this->container->get('swiftmailer.transport.real'));
-
-        $fs->remove($reportsDir);
+        $mailService->informAdminEnd($customersInformed, $i);
 
         $response = new Response();
         $response->setContent('Reports are generated and dispatched.');

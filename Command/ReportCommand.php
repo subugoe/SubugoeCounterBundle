@@ -27,7 +27,7 @@ class ReportCommand extends ContainerAwareCommand
         $output->writeln('Start generating and dispatching reports.');
         $report = new DefaultController();
         $report->setContainer($this->getContainer());
-        $report->reportAction();
+        $report->reportGeneratingAndDispatchingAction();
         $output->writeln('Reports are generated and dispatched.');
     }
 }

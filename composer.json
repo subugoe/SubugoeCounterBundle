@@ -12,6 +12,11 @@
        "psr-4": { "Subugoe\\CounterBundle\\": "" }
     },
     "require": {
-        "mewesk/twig-excel-bundle": "^2.1"
+        "symfony/symfony": "^3.2",
+        "doctrine/orm": "^2.5",
+        "swiftmailer/swiftmailer": "^5.4",
+        "mewesk/twig-excel-bundle": "^2.1",
+        "eightpoints/guzzle-bundle": "^5.0",
+        "nelmio/solarium-bundle": "^2.2"
     }
 }
