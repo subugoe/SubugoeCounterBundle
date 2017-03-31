@@ -1,4 +1,31 @@
 services:
-#    subugoe_counter.example:
-#        class: Subugoe\CounterBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+  subugoe_counter.report_service:
+    class: Subugoe\CounterBundle\Service\ReportService
+    arguments: ["@solarium.client", "@subugoe_counter.reporting_client", "@filesystem", "@templating", "@subugoe_counter.user_service", "@subugoe_counter.document_service"]
+
+  subugoe_counter.document_service:
+    class: Subugoe\CounterBundle\Service\DocumentService
+    arguments: ["@solarium.client"]
+
+  subugoe_counter.user_service:
+    class: Subugoe\CounterBundle\Service\UserService
+    arguments: ["@doctrine", "@request_stack"]
+
+  subugoe_counter.mail_service:
+    class: Subugoe\CounterBundle\Service\MailService
+    arguments: ["@mailer", "@templating"]
+
+  subugoe_counter.tracking_listener:
+    class: Subugoe\CounterBundle\EventListener\PiwikTrackingListener
+    arguments: ["@subugoe_counter.document_service", "@subugoe_counter.user_service", "@subugoe_counter.tracking_client"]
+    tags:
+        - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+
+  subugoe_counter.reporting_client:
+        class: GuzzleHttp\Client
+        arguments: [base_uri: "%piwikreporter_baseurl%"]
+
+  subugoe_counter.tracking_client:
+        class: GuzzleHttp\Client
+        arguments: [base_uri: "%piwiktracker_baseurl%"]
+
