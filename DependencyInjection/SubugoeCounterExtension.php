@@ -61,8 +61,6 @@ class SubugoeCounterExtension extends Extension
                 $config['exclude_ips'],
         ]
         );
-
-
     }
 
     public function getAlias()

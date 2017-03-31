@@ -56,7 +56,7 @@ class SUSHIController extends Controller
 
         return $response;
     }
-    
+
     /*
      * Returns Platform Report 1 in json format
      *
@@ -97,10 +97,9 @@ class SUSHIController extends Controller
         ];
 
         foreach ($platformReport1Data as $key => $value) {
-
             $instance = [];
 
-                $instance[] = ['MetricType' => $this->counterTerms[$key][1], 'Count' => $value];
+            $instance[] = ['MetricType' => $this->counterTerms[$key][1], 'Count' => $value];
 
             $pr1['ReportItems'][] = [
                         'Platform' => 'nl.sub.uni-goettingen.de',
@@ -124,8 +123,7 @@ class SUSHIController extends Controller
                                 'Instance' => $instance,
                         ],
                 ];
-
-            }
+        }
 
         return $this->json($pr1);
     }
@@ -170,7 +168,6 @@ class SUSHIController extends Controller
         ];
 
         foreach ($databaseReport1Data as $key => $value) {
-
             $instance = [];
 
             foreach ($value as $key1 => $value1) {
@@ -199,7 +196,6 @@ class SUSHIController extends Controller
                                 'Instance' => $instance,
                         ],
                 ];
-
             }
         }
 

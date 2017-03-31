@@ -25,7 +25,6 @@ class UserService
      *
      * @param RegistryInterface $doctrine
      * @param RequestStack      $request
-     *
      */
     public function __construct(RegistryInterface $doctrine, RequestStack $request)
     {

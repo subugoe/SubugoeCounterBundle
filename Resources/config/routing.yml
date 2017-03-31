@@ -16,7 +16,3 @@ subugoe_counter_dr1:
     path:     /r5/dr1
     methods:   "GET"
     defaults: { _controller: SubugoeCounterBundle:SUSHI:databaseReport1 }
-
-subugoe_counter_report:
-    path:     /report.{_format}
-    defaults: { _controller: SubugoeCounterBundle:Default:reportGeneratingAndDispatching, _format: "xls" }

@@ -21,7 +21,7 @@ class ReportService
      * @var Guzzle
      */
     protected $guzzle;
-    
+
     /**
      * @var Filesystem
      */
@@ -35,7 +35,7 @@ class ReportService
     /*
      * @var UserService
      */
-    private  $userService;
+    private $userService;
 
     /*
      * @var DocumentService
@@ -126,13 +126,12 @@ class ReportService
     /**
      * ReportService constructor.
      *
-     * @param Client            $client
-     * @param Guzzle            $guzzle
-     * @param Filesystem        $filesystem
-     * @param TwigEngine $templating
-     * @param UserService $userService
+     * @param Client          $client
+     * @param Guzzle          $guzzle
+     * @param Filesystem      $filesystem
+     * @param TwigEngine      $templating
+     * @param UserService     $userService
      * @param DocumentService $documentService
-     *
      */
     public function __construct(Client $client, Guzzle $guzzle, Filesystem $filesystem, TwigEngine $templating, UserService $userService, DocumentService $documentService)
     {
@@ -382,7 +381,8 @@ class ReportService
      *
      * @return array $databaseReport1Data The Database Report 1 visit data
      */
-    protected function getDatabaseData($databaseReport1Content, $identifier) {
+    protected function getDatabaseData($databaseReport1Content, $identifier)
+    {
         $userVisitsArr = [];
 
         if (is_array($databaseReport1Content) && $databaseReport1Content !== []) {
@@ -468,7 +468,8 @@ class ReportService
      *
      * @return array $productsTracked The tracked products
      */
-    protected function getProductsTracked($databaseReport1Content, $identifier) {
+    protected function getProductsTracked($databaseReport1Content, $identifier)
+    {
         $productsTracked = [];
 
         if (is_array($databaseReport1Content) && $databaseReport1Content !== []) {
@@ -484,7 +485,6 @@ class ReportService
                         if (!in_array($trackingString[2], $productsTracked)) {
                             $productsTracked[] = $trackingString[2];
                         }
-
                     }
                 }
             }

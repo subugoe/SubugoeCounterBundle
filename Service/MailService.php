@@ -64,8 +64,7 @@ class MailService
      * MailService constructor.
      *
      * @param Swift_Mailer $mailer
-     * @param TwigEngine $templating
-     *
+     * @param TwigEngine   $templating
      */
     public function __construct(Swift_Mailer $mailer, TwigEngine $templating)
     {
@@ -111,7 +110,7 @@ class MailService
         $adminMessageEnd->setSubject($this->reportingEndSubject);
         $adminMessageEnd->setFrom($this->adminEmail);
         $adminMessageEnd->setTo($this->adminEmail);
-        $adminMessageEnd->setBody($this->reportingEndBody.' '.date('d.m-Y H:i:s')."\r\n\r\n ".$this->numberOfReportsSent." ".$i."\r\n\r\n".$customersInformed);
+        $adminMessageEnd->setBody($this->reportingEndBody.' '.date('d.m-Y H:i:s')."\r\n\r\n ".$this->numberOfReportsSent.' '.$i."\r\n\r\n".$customersInformed);
         $this->mailer->send($adminMessageEnd);
     }
 

@@ -128,9 +128,8 @@ class PiwikTrackingListener
      * PiwikTrackingListener constructor.
      *
      * @param DocumentService $documentService
-     * @param UserService $userService
-     * @param Guzzle $guzzle
-     *
+     * @param UserService     $userService
+     * @param Guzzle          $guzzle
      */
     public function __construct(DocumentService $documentService, UserService $userService, Guzzle $guzzle)
     {
@@ -165,7 +164,7 @@ class PiwikTrackingListener
     public function onKernelResponse(FilterResponseEvent $event)
     {
         $clientIp = $event->getRequest()->getClientIp();
-        
+
         $passed = true;
 
         if (is_array($this->excludeIps) && $this->excludeIps != [] && !empty($clientIp)) {
@@ -194,18 +193,15 @@ class PiwikTrackingListener
         }
 
         if ($passed === true) {
-
             $isResponseSuccessful = $event->getResponse()->isSuccessful();
 
             if ($isResponseSuccessful) {
-
                 if (!empty($this->piwiktrackerBaseurl)) {
                     $queryString = urldecode($event->getRequest()->getQueryString());
                     $isThisASearchResult = explode('=', explode('?', $queryString)[0]);
                     $action = $event->getRequest()->get('_route');
 
                     if (!empty($action) && ($action === '_detail' || $action === '_search' || $action === '_search_advanced' || $action === '_download_pdf')) {
-
                         $piwikPing = false;
                         try {
                             $piwikPing = $this->guzzle->request('get');
@@ -247,7 +243,6 @@ class PiwikTrackingListener
                                                 $documentId,
                                                 $documentFields
                                         );
-
                                     } elseif ($action === '_download_pdf') {
                                         $pdfDocumentId = explode(':', $id);
                                         $workId = $pdfDocumentId[1];
@@ -285,7 +280,6 @@ class PiwikTrackingListener
                                             (isset($userIdentifier) && !empty($userIdentifier)) &&
                                             (isset($product) && !empty($product))
                                     ) {
-
                                         if ($page === null) {
                                             $searchFlag = false;
 
@@ -590,7 +584,7 @@ class PiwikTrackingListener
                                             );
                                             $dr1SearchPromise = $this->guzzle->postAsync($dr1SearchTrackingRequest);
                                             $dr1SearchPromise->wait();
-                                        };
+                                        }
                                     }
 
                                     // Platform Report 1 Regular Searches Tracking Identifier (pr1 = Platform Report 1, RS = Regular Searches)

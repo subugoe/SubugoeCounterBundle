@@ -29,7 +29,7 @@ class UserRepository extends EntityRepository
             ->getQuery();
 
         $identifier = $query->getOneOrNullResult();
-        
+
         return $identifier;
     }
 
