@@ -138,15 +138,8 @@ class PiwikTrackingListener
         $this->guzzle = $guzzle;
     }
 
-    public function setConfig(
-            $idsite,
-            $token,
-            $documentFields,
-            $piwiktrackerBaseurl,
-            $configMonographDocumentType,
-            $configPeriodicalDocumentType,
-            $excludeIps
-    ) {
+    public function setConfig($idsite, $token, $documentFields, $piwiktrackerBaseurl, $configMonographDocumentType, $configPeriodicalDocumentType, $excludeIps)
+    {
         $this->idsite = $idsite;
         $this->token = $token;
         $this->documentFields = $documentFields;

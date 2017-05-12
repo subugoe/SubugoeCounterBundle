@@ -395,7 +395,7 @@ class ReportService
 
                 if (isset($userTrackedIdentifier) && $userTrackedIdentifier === $identifier) {
                     if (!empty($trackingString[2])) {
-                        $trackedUserVisitsArr[$trackingString[2]][$trackingString[0]] = $item['nb_visits'];
+                        $trackedUserVisitsArr[$trackingString[2]][$trackingString[0]] = $item['nb_actions'];
                     }
                 }
             }
@@ -440,7 +440,7 @@ class ReportService
                 }
 
                 if (isset($userTrackedIdentifier) && $userTrackedIdentifier === $identifier) {
-                    $trackedUserVisitsArr[$trackingString[0]] = $item['nb_visits'];
+                    $trackedUserVisitsArr[$trackingString[0]] = $item['nb_actions'];
                 }
             }
 
