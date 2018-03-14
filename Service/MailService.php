@@ -121,15 +121,19 @@ class MailService
      * @param string $databaseReport1FileTarget The path to Database Report 1
      * @param string $platformReport1FileTarget The path to Platform Report 1
      */
-    public function dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget)
+    public function dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget, $database, $platform)
     {
         $message = \Swift_Message::newInstance();
         $message->setSubject($this->reportSubject.' '.date('Y', strtotime('- 1 year')));
         $message->setFrom($this->adminEmail);
         $message->setTo($toUser);
         $message->setBody($this->templating->render('SubugoeCounterBundle:reports:emailbody.html.twig', ['reportBody' => $this->reportBody]), 'text/html');
-        $message->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
-        $message->attach(\Swift_Attachment::fromPath($platformReport1FileTarget));
+        if (1 === intval($database)) {
+            $message->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
+        }
+        if (1 === intval($platform)) {
+            $message->attach(\Swift_Attachment::fromPath($platformReport1FileTarget));
+        }
         $this->mailer->send($message);
     }
 }

@@ -20,7 +20,9 @@ class ReportCommand extends ContainerAwareCommand
             ->setDescription('Generate and dispatch counter reports.')
 
             ->addArgument('month', InputArgument::OPTIONAL, 'The end month of the report.')
-            ->addArgument('year', InputArgument::OPTIONAL, 'The year for which the report is requested.');
+            ->addArgument('year', InputArgument::OPTIONAL, 'The year for which the report is requested.')
+            ->addArgument('database', InputArgument::OPTIONAL, 'Should Database Report 1 be dispached?')
+            ->addArgument('platform', InputArgument::OPTIONAL, 'Should Platform Report 1 be dispached?');
     }
 
     /**
@@ -30,6 +32,8 @@ class ReportCommand extends ContainerAwareCommand
     {
         $month = $input->getArgument('month');
         $year = $input->getArgument('year');
+        $database = $input->getArgument('database');
+        $platform = $input->getArgument('platform');
         $counterBeginYear = 2017;
 
         if (isset($month) && !in_array($month, range(1, 12))) {
@@ -45,7 +49,7 @@ class ReportCommand extends ContainerAwareCommand
         $output->writeln('Start generating and dispatching reports.');
         $report = new DefaultController();
         $report->setContainer($this->getContainer());
-        $report->reportGeneratingAndDispatchingAction($month, $year);
+        $report->reportGeneratingAndDispatchingAction($month, $year, $database, $platform);
         $output->writeln('Reports are generated and dispatched.');
     }
 }
