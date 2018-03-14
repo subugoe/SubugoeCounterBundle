@@ -73,7 +73,7 @@
             {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Period covered by report:{% endxlscell %}
         {% endxlsrow %}
         {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ "1 January"|date("Y-m-d") }} to {{ "last day of last month"|date("Y-m-d") }}{% endxlscell %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ coveredPeriodStart }} to {{ coveredPeriodEnd }}{% endxlscell %}
         {% endxlsrow %}
         {% xlsrow %}
             {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Date run:{% endxlscell %}

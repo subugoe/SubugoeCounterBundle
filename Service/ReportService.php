@@ -158,21 +158,32 @@ class ReportService
      * @return array $platformReport1data The Platform Report 1 data
      * @return array $reportingPeriod The reporting period
      */
-    public function reportService()
+    public function reportService($month, $year)
     {
         $allUsers = $this->userService->getUsers();
 
         $databaseReport1Type = self::DATABASE_REPORT_1;
         $platformReport1Type = self::PLATFORM_REPORT_1;
-        $currentMonth = intval(ltrim(date('m'), '0'));
-        $currentYear = date('Y');
 
-        if ($currentMonth === 1) {
-            $currentMonth = 12;
-            $currentYear = date('Y', strtotime('-1 year'));
+        if (!empty($month) && !empty($year)) {
+            $currentMonth = $month;
+            $currentYear = $year;
         } else {
-            $currentMonth = $currentMonth - 1;
+
+            $currentMonth = intval(ltrim(date('m'), '0'));
+            $currentYear = date('Y');
+
+            if ($currentMonth === 1) {
+                $currentMonth = 12;
+                $currentYear = date('Y', strtotime('-1 year'));
+            } else {
+                $currentMonth = $currentMonth - 1;
+            }
         }
+
+        $coveredPeriodStart = $currentYear.'-01-01';
+        $firstOfTheEndMonth = $currentYear.'-'.$currentMonth.'-01';
+        $coveredPeriodEnd = date('Y-m-t',strtotime($firstOfTheEndMonth));
 
         $reportingPeriod = [];
         $databaseReport1Data = [];
@@ -254,7 +265,7 @@ class ReportService
             }
         }
 
-        return [$databaseReport1Data, $platformReport1Data, $reportingPeriod];
+        return [$databaseReport1Data, $platformReport1Data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd];
     }
 
     /*
@@ -313,7 +324,7 @@ class ReportService
      *
      * @return string $databaseReport1FileTarget The path to Database Report 1 file
      */
-    public function generateDatabaseReport1($userIdentifier, $reportsDir, $data, $reportingPeriod)
+    public function generateDatabaseReport1($userIdentifier, $reportsDir, $data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd)
     {
         $collections = $this->counterCollections;
         $publisherArr = array_combine(array_column($collections, 'id'), array_column($collections, 'publisher'));
@@ -333,6 +344,8 @@ class ReportService
                                 'fulltitleArr' => $fulltitleArr,
                                 'reportingPeriod' => $reportingPeriod,
                                 'platform' => $platform,
+                                'coveredPeriodStart' => $coveredPeriodStart,
+                                'coveredPeriodEnd' => $coveredPeriodEnd,
                         ]
                 )
         );
@@ -351,7 +364,7 @@ class ReportService
      *
      * @return string $platformReport1FileTarget The path to Platform Report 1 file
      */
-    public function generatePlatformReport1($userIdentifier, $reportsDir, $user, $platformReport1data, $reportingPeriod)
+    public function generatePlatformReport1($userIdentifier, $reportsDir, $user, $platformReport1data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd)
     {
         $platform = $this->platform;
         $platformReport1FileName1 = self::PLATFORM_REPORT_1.'_'.$userIdentifier.'.'.self::REPORT_FORMAT;
@@ -366,6 +379,8 @@ class ReportService
                                 'customerIdentifier' => $userIdentifier,
                                 'reportingPeriod' => $reportingPeriod,
                                 'platform' => $platform,
+                                'coveredPeriodStart' => $coveredPeriodStart,
+                                'coveredPeriodEnd' => $coveredPeriodEnd,
                         ]
                 )
         );
