@@ -35,7 +35,7 @@ class DefaultController extends Controller
     /*
      * Generates and dispatch Database Report 1 and Platform Report 1
      */
-    public function reportGeneratingAndDispatchingAction($month, $year): Response
+    public function reportGeneratingAndDispatchingAction($month, $year, $database, $platform): Response
     {
         $reportsDir = $this->getParameter('reports_dir');
         $fs = $this->get('filesystem');
@@ -66,7 +66,7 @@ class DefaultController extends Controller
                 $platformReport1FileTarget = $reportService->generatePlatformReport1($userIdentifier, $reportsDir, key($data), $platformReport1data[$userIdentifier], $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd);
                 $repository = $this->getDoctrine()->getRepository('SubugoeCounterBundle:User');
                 $toUser = $repository->findOneByIdentifier($userIdentifier)->getEmail();
-                $mailService->dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget);
+                $mailService->dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget, $database, $platform);
 
                 $customersInformed .= ++$i.'. '.key($data)."\r\n\r\n";
             }
