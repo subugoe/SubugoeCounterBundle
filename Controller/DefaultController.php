@@ -35,7 +35,7 @@ class DefaultController extends Controller
     /*
      * Generates and dispatch Database Report 1 and Platform Report 1
      */
-    public function reportGeneratingAndDispatchingAction(): Response
+    public function reportGeneratingAndDispatchingAction($month, $year): Response
     {
         $reportsDir = $this->getParameter('reports_dir');
         $fs = $this->get('filesystem');
@@ -49,7 +49,7 @@ class DefaultController extends Controller
         $reportService = $this->get('subugoe_counter.report_service');
         $mailService = $this->get('subugoe_counter.mail_service');
 
-        list($databaseReport1Data, $platformReport1data, $reportingPeriod) = $reportService->reportService();
+        list($databaseReport1Data, $platformReport1data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd) = $reportService->reportService($month, $year);
 
         // Informs NLH in charge of the start of reporting service
         $mailService->informAdminStart();
@@ -62,8 +62,8 @@ class DefaultController extends Controller
                 (is_array($platformReport1data) && $platformReport1data !== []) &&
                 (is_array($reportingPeriod) && $reportingPeriod !== [])) {
             foreach ($databaseReport1Data as $userIdentifier => $data) {
-                $databaseReport1FileTarget = $reportService->generateDatabaseReport1($userIdentifier, $reportsDir, $data, $reportingPeriod);
-                $platformReport1FileTarget = $reportService->generatePlatformReport1($userIdentifier, $reportsDir, key($data), $platformReport1data[$userIdentifier], $reportingPeriod);
+                $databaseReport1FileTarget = $reportService->generateDatabaseReport1($userIdentifier, $reportsDir, $data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd);
+                $platformReport1FileTarget = $reportService->generatePlatformReport1($userIdentifier, $reportsDir, key($data), $platformReport1data[$userIdentifier], $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd);
                 $repository = $this->getDoctrine()->getRepository('SubugoeCounterBundle:User');
                 $toUser = $repository->findOneByIdentifier($userIdentifier)->getEmail();
                 $mailService->dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget);

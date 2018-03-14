@@ -124,7 +124,7 @@ class MailService
     public function dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget)
     {
         $message = \Swift_Message::newInstance();
-        $message->setSubject($this->reportSubject.' '.date('m-Y', strtotime('- 1 month')));
+        $message->setSubject($this->reportSubject.' '.date('Y', strtotime('- 1 year')));
         $message->setFrom($this->adminEmail);
         $message->setTo($toUser);
         $message->setBody($this->templating->render('SubugoeCounterBundle:reports:emailbody.html.twig', ['reportBody' => $this->reportBody]), 'text/html');
