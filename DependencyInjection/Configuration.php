@@ -35,6 +35,8 @@ class Configuration implements ConfigurationInterface
                   ->scalarNode('reporting_end_subject')->end()
                   ->scalarNode('reporting_end_body')->end()
                   ->scalarNode('number_of_reports_sent')->end()
+                  ->scalarNode('cumulative_report_subject')->end()
+                  ->scalarNode('cumulative_report_body')->end()
                   ->scalarNode('doc_type_monograph')->end()
                   ->scalarNode('doc_type_periodical')->end()
                   ->arrayNode('document_fields')

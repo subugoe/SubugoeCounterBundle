@@ -47,6 +47,8 @@ class SubugoeCounterExtension extends Extension
                 $config['reporting_end_subject'],
                 $config['reporting_end_body'],
                 $config['number_of_reports_sent'],
+                $config['cumulative_report_subject'],
+                $config['cumulative_report_body'],
         ]
         );
 

@@ -1,0 +1,127 @@
+{% xlsdocument %}
+    {% xlssheet 'Worksheet' {
+        columnDimension: {
+            'A': {
+                width: 40
+            },
+            'B': {
+                width: 70
+            },
+            'C': {
+                width: 25
+            },
+            'D': {
+                width: 30
+            },
+            'E': {
+                width: 25
+            },
+            'F': {
+                width: 10
+            },
+            'G': {
+                width: 10
+            },
+            'H': {
+                width: 10
+            },
+            'I': {
+                width: 10
+            },
+            'J': {
+                width: 10
+            },
+            'K': {
+                width: 10
+            },
+            'L': {
+                width: 10
+            },
+            'M': {
+                width: 10
+            },
+            'N': {
+                width: 10
+            },
+            'O': {
+                width: 10
+            },
+            'P': {
+                width: 10
+            },
+            'Q': {
+                width: 10
+            },
+        },
+        rowDimension: {
+            'default': {
+                rowHeight: 20,
+            },
+        },
+    }%}
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } },  } } %}Database Report 1 (R4){% endxlscell %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Total Searches, Result Clicks and Record Views by Month and Database{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Period covered by report:{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ coveredPeriodStart }} to {{ coveredPeriodEnd }}{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Date run:{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ "now"|date("Y-m-d") }}{% endxlscell %}
+        {% endxlsrow %}
+
+        {% xlsrow %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Institution Id{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Institution Name{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Database{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Publisher{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Platform{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}User Activity{% endxlscell %}
+            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Reporting Period Total{% endxlscell %}
+
+            {% for value in reportingPeriod %}
+                    {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}{{ value }}{% endxlscell %}
+            {% endfor %}
+        {% endxlsrow %}
+
+        {% set x = 1 %}
+
+        {% for key, value in databaseReport1 %}
+            {% for key1, value1 in value %}
+                {% for key2, value2 in value1 %}
+                    {% for key3, value3 in value2 %}
+
+                    {% xlsrow %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ key }}{% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ key1 }}{% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ fulltitleArr[key2]|raw }} ({{ key2 }}){% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ publisherArr[key2] }}{% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ platform }}{% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ key3 }}{% endxlscell %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}=SUM(H{{ 6 + x }}:S{{ 6 + x }}){% endxlscell %}
+
+                        {% if value3 is not empty %}
+                        {% for key4, value4 in value3 %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ value4 }}{% endxlscell %}
+                        {% endfor %}
+                        {% else %}
+                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}0{% endxlscell %}
+                        {% endif %}
+
+                        {% set x = x + 1 %}
+
+                    {% endxlsrow %}
+
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+
+    {% endxlssheet %}
+{% endxlsdocument %}

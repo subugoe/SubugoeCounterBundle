@@ -73,6 +73,11 @@ class ReportService
     const DATABASE_REPORT_1 = 'databaseReport1';
 
     /*
+     * @var string Cumulative database report 1
+     */
+    const CUMULATIVE_DATABASE_REPORT_1 = 'cumulative_databaseReport1';
+
+    /*
      * @var string The name under which platform report 1 tracking data are stored in Piwik database
      */
     const PLATFORM_REPORT_1 = 'platformReport1';
@@ -592,5 +597,44 @@ class ReportService
         }
 
         return false;
+    }
+
+    /*
+     * Generates Cumulative Database Report  1
+     *
+     * @param string $reportsDir The reports dir
+     * @param array $data The user specific tracked data for Database Report 1
+     * @param array $reportingPeriod The reporting period
+     *
+     * @return string $databaseReport1FileTarget The path to Database Report 1 file
+     */
+    public function generateCumulativeDatabaseReport1($reportsDir, $data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd)
+    {
+        $collections = $this->counterCollections;
+        $publisherArr = array_combine(array_column($collections, 'id'), array_column($collections, 'publisher'));
+        $fulltitleArr = array_combine(array_column($collections, 'id'), array_column($collections, 'full_title'));
+        $platform = $this->platform;
+
+        $cumulativeDatabaseReport1FileName = self::CUMULATIVE_DATABASE_REPORT_1.'.'.self::REPORT_FORMAT;
+
+        $cumulativeDatabaseReport1FileTarget = $reportsDir.$cumulativeDatabaseReport1FileName;
+        $this->filesystem->dumpFile(
+            $cumulativeDatabaseReport1FileTarget,
+            $this->templating->render(
+                'SubugoeCounterBundle:reports:cumulativedatabasereport1.xls.twig',
+                [
+                    'databaseReport1' => $data,
+                    'customer' => key($data),
+                    'publisherArr' => $publisherArr,
+                    'fulltitleArr' => $fulltitleArr,
+                    'reportingPeriod' => $reportingPeriod,
+                    'platform' => $platform,
+                    'coveredPeriodStart' => $coveredPeriodStart,
+                    'coveredPeriodEnd' => $coveredPeriodEnd,
+                ]
+            )
+        );
+
+        return $cumulativeDatabaseReport1FileTarget;
     }
 }
