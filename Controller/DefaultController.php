@@ -32,20 +32,19 @@ class DefaultController extends Controller
      */
     protected $counterTerms = ['RS' => [0, self::REGULAR_SEARCHES, 'Searches'], 'SFA' => [1, self::FEDERATED_AUTOMATED_SEARCHES, 'Searches'], 'RV' => [2, self::RECORD_VIEWS, 'Requests'], 'RC' => [3, self::RESULT_CLICKS, 'Requests']];
 
-    /*
+    /**
      * Generates and dispatch Database Report 1 and Platform Report 1
+     *
+     * @param $month
+     * @param $year
+     * @param $database
+     * @param $platform
+     * @return Response
      */
     public function reportGeneratingAndDispatchingAction($month, $year, $database, $platform): Response
     {
         $reportsDir = $this->getParameter('reports_dir');
-        $fs = $this->get('filesystem');
-        if (!$fs->exists($reportsDir)) {
-            $fs->mkdir($reportsDir);
-        } else {
-            $fs->remove($reportsDir);
-            $fs->mkdir($reportsDir);
-        }
-
+        $this->checkIfReportDirExists($reportsDir);
         $reportService = $this->get('subugoe_counter.report_service');
         $mailService = $this->get('subugoe_counter.mail_service');
 
@@ -81,5 +80,47 @@ class DefaultController extends Controller
         $response->setStatusCode(Response::HTTP_OK);
 
         return $response;
+    }
+
+    /**
+     * Generates and dispatch cumulative Database Report 1
+     *
+     * @param $month
+     * @param $year
+     * @return Response
+     */
+    public function cumulativeDatabaseReportAction($month, $year)
+    {
+        $reportsDir = $this->getParameter('reports_dir');
+        $this->checkIfReportDirExists($reportsDir);
+        $reportService = $this->get('subugoe_counter.report_service');
+        list($databaseReport1Data, $platformReport1data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd) = $reportService->reportService($month, $year);
+        $databaseReport1FileTarget = $reportService->generateCumulativeDatabaseReport1($reportsDir, $databaseReport1Data, $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd);
+        $mailService = $this->get('subugoe_counter.mail_service');
+        $mailService->dispatchCumulativeDatabaseReport($databaseReport1FileTarget, $year);
+
+        $response = new Response();
+        $response->setContent('Report is generated and dispatched.');
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->setStatusCode(Response::HTTP_OK);
+
+        return $response;
+    }
+
+    /**
+     * Checks if report directory exists
+     * If not it does create it
+     *
+     * @param string $reportsDir The report directory path
+     */
+    private function checkIfReportDirExists($reportsDir)
+    {
+        $fs = $this->get('filesystem');
+        if (!$fs->exists($reportsDir)) {
+            $fs->mkdir($reportsDir);
+        } else {
+            $fs->remove($reportsDir);
+            $fs->mkdir($reportsDir);
+        }
     }
 }

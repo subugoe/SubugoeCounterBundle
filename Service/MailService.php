@@ -26,7 +26,7 @@ class MailService
     private $adminEmail;
 
     /*
-     * @var Report E-Mail subject
+     * @var string Report E-Mail subject
      */
     private $reportSubject;
 
@@ -60,6 +60,16 @@ class MailService
      */
     private $numberOfReportsSent;
 
+    /*
+     * @var string Cumulative Report E-Mail subject
+     */
+    private $cumulativeReportSubject;
+
+    /*
+     * @var string Cumulative Report E-Mail body
+     */
+    private $cumulativeReportBody;
+
     /**
      * MailService constructor.
      *
@@ -72,7 +82,7 @@ class MailService
         $this->templating = $templating;
     }
 
-    public function setConfig($adminEmail, $reportSubject, $reportBody, $reportingStartSubject, $reportingStartBody, $reportingEndSubject, $reportingEndBody, $numberOfReportsSent)
+    public function setConfig($adminEmail, $reportSubject, $reportBody, $reportingStartSubject, $reportingStartBody, $reportingEndSubject, $reportingEndBody, $numberOfReportsSent, $cumulativeReportSubject, $cumulativeReportBody)
     {
         $this->adminEmail = $adminEmail;
         $this->reportSubject = $reportSubject;
@@ -82,6 +92,8 @@ class MailService
         $this->reportingEndSubject = $reportingEndSubject;
         $this->reportingEndBody = $reportingEndBody;
         $this->numberOfReportsSent = $numberOfReportsSent;
+        $this->cumulativeReportSubject = $cumulativeReportSubject;
+        $this->cumulativeReportBody = $cumulativeReportBody;
     }
 
     /*
@@ -135,5 +147,22 @@ class MailService
             $message->attach(\Swift_Attachment::fromPath($platformReport1FileTarget));
         }
         $this->mailer->send($message);
+    }
+
+    /*
+     * Dispatches the generated cumulative database report 1 via e-mail
+     *
+     * @param string $databaseReport1FileTarget The path to Database Report 1
+     *
+     */
+    public function dispatchCumulativeDatabaseReport($databaseReport1FileTarget, $year)
+    {
+        $dispatchMessage = \Swift_Message::newInstance();
+        $dispatchMessage->setSubject($this->cumulativeReportSubject.' '.$year);
+        $dispatchMessage->setFrom($this->adminEmail);
+        $dispatchMessage->setTo($this->adminEmail);
+        $dispatchMessage->setBody($this->cumulativeReportBody.' '.$year.'.');
+        $dispatchMessage->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
+        $this->mailer->send($dispatchMessage);
     }
 }
