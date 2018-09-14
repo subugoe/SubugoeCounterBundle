@@ -12,7 +12,7 @@
        "psr-4": { "Subugoe\\CounterBundle\\": "" }
     },
     "require": {
-        "symfony/symfony": "^3.2",
+        "symfony/symfony": "^4",
         "doctrine/orm": "^2.5",
         "swiftmailer/swiftmailer": "^5.4",
         "mewesk/twig-spreadsheet-bundle": "^1.1",
