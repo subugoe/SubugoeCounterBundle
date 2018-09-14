@@ -15,7 +15,7 @@
         "symfony/symfony": "^3.2",
         "doctrine/orm": "^2.5",
         "swiftmailer/swiftmailer": "^5.4",
-        "mewesk/twig-excel-bundle": "^2.1",
+        "mewesk/twig-spreadsheet-bundle": "^1.1",
         "eightpoints/guzzle-bundle": "^5.0",
         "nelmio/solarium-bundle": "^2.2"
     }
