@@ -14,7 +14,5 @@
     "require": {
         "swiftmailer/swiftmailer": "^5.4",
         "mewesk/twig-spreadsheet-bundle": "^1.1",
-        "eightpoints/guzzle-bundle": "^7.3",
-        "nelmio/solarium-bundle": "^2.4"
     }
 }
