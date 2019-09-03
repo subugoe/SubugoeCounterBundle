@@ -390,7 +390,7 @@ class PiwikTrackingListener
                                                 // Platform Report 1 Record Views Tracking Identifier (pr1 = Platform Report 1, RV = Record Views)
                                                 $pr1RVTrackingIdentifier = sprintf('%s:%s', 'RV', $userIdentifier);
 
-                                                if (!$externalClick) {
+                                                if ($externalClick) {
                                                     // Database Report 1 Result Clicks Tracking Identifier (dr1 = Database Report 1, RC = Result Clicks)
                                                     $dr1RCTrackingIdentifier = sprintf(
                                                             '%s:%s:%s',
