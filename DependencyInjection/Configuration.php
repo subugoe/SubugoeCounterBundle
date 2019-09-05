@@ -17,9 +17,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('subugoe_counter');
-        $rootNode
+        $treeBuilder = new TreeBuilder('subugoe_counter');
+        $treeBuilder->getRootNode()
               ->children()
                   ->integerNode('piwik_idsite')->end()
                   ->scalarNode('piwik_token_auth')->end()
