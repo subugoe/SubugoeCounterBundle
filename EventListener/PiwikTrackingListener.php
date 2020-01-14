@@ -2,157 +2,140 @@
 
 namespace Subugoe\CounterBundle\EventListener;
 
+use GuzzleHttp\ClientInterface;
 use Subugoe\CounterBundle\Service\DocumentService;
 use Subugoe\CounterBundle\Service\UserService;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
-use GuzzleHttp\Client as Guzzle;
 
 class PiwikTrackingListener
 {
-    /*
-     * @var DocumentService
-     */
-    private $documentService;
-
-    /*
-     * @var UserService
-     */
-    private $userService;
-
     /**
-     * @var Guzzle
-     */
-    private $guzzle;
-
-    /*
-     * @var Piwik id
-     */
-    private $idsite;
-
-    /*
-     * @var Piwik token
-     */
-    private $token;
-
-    /*
-     * @var Query document fields
-     */
-    private $documentFields;
-
-    /*
-     * @var Piwik baseurl
-     */
-    private $piwiktrackerBaseurl;
-
-    /*
-     * @var Monograph document type
-     */
-    private $configMonographDocumentType;
-
-    /*
-     * @var IPs to be excluded from tracking
-     */
-    private $excludeIps;
-
-    /*
-     * @var Periodical document type
-     */
-    private $configPeriodicalDocumentType;
-
-    /*
      * @var string The name under which book report 1 tracking data are stored in Piwik database
      */
     const BOOK_REPORT_1 = 'bookReport1';
 
-    /*
+    /**
      * @var int Piwik slot index for book report 1
      */
     const BOOK_REPORT_1_SLOT = 1;
 
-    /*
+    /**
      * @var string The name under which book report 2 tracking data are stored in Piwik database
      */
     const BOOK_REPORT_2 = 'bookReport2';
 
-    /*
+    /**
      * @var int Piwik slot index for book report 2
      */
     const BOOK_REPORT_2_SLOT = 2;
 
-    /*
+    /**
      * @var string The name under which database report 1 tracking data are stored in Piwik database
      */
     const DATABASE_REPORT_1 = 'databaseReport1';
 
-    /*
+    /**
      * @var int Piwik slot index for database report 1
      */
     const DATABASE_REPORT_1_SLOT = 3;
 
-    /*
-     * @var string The name under which platform report 1 tracking data are stored in Piwik database
-     */
-    const PLATFORM_REPORT_1 = 'platformReport1';
-
-    /*
-     * @var int Piwik slot index for platform report 1
-     */
-    const PLATFORM_REPORT_1_SLOT = 4;
-
-    /*
-     * @var string The name under which journal report 1 tracking data are stored in Piwik database
-     */
-    const JOURNAL_REPORT_1 = 'journalReport1';
-
-    /*
-     * @var int Piwik slot index for journal report 1
-     */
-    const JOURNAL_REPORT_1_SLOT = 5;
-
-    /*
-     * @var string Pdf document type
-     */
-    const PDF_DOCUMENT_TYPE = 'pdf';
-
-    /*
+    /**
      * @var string Document id lable in Solr database
      */
     const ID_SEARCH_STR = 'id';
 
-    /*
+    /**
+     * @var string The name under which journal report 1 tracking data are stored in Piwik database
+     */
+    const JOURNAL_REPORT_1 = 'journalReport1';
+
+    /**
+     * @var int Piwik slot index for journal report 1
+     */
+    const JOURNAL_REPORT_1_SLOT = 5;
+
+    /**
+     * @var string Pdf document type
+     */
+    const PDF_DOCUMENT_TYPE = 'pdf';
+
+    /**
+     * @var string The name under which platform report 1 tracking data are stored in Piwik database
+     */
+    const PLATFORM_REPORT_1 = 'platformReport1';
+
+    /**
+     * @var int Piwik slot index for platform report 1
+     */
+    const PLATFORM_REPORT_1_SLOT = 4;
+
+    /**
      * @var string Document work id lable in Solr database
      */
     const WORK_SEARCH_STR = 'work';
 
     /**
-     * PiwikTrackingListener constructor.
-     *
-     * @param DocumentService $documentService
-     * @param UserService     $userService
-     * @param Guzzle          $guzzle
+     * @var Monograph document type
      */
-    public function __construct(DocumentService $documentService, UserService $userService, Guzzle $guzzle)
+    private $configMonographDocumentType;
+
+    /**
+     * @var Periodical document type
+     */
+    private $configPeriodicalDocumentType;
+
+    /**
+     * @var Query document fields
+     */
+    private $documentFields;
+
+    /**
+     * @var DocumentService
+     */
+    private $documentService;
+
+    /**
+     * @var IPs to be excluded from tracking
+     */
+    private $excludeIps;
+
+    /**
+     * @var ClientInterface
+     */
+    private $guzzle;
+
+    /**
+     * @var Piwik id
+     */
+    private $idsite;
+
+    /**
+     * @var Piwik baseurl
+     */
+    private $piwiktrackerBaseurl;
+
+    /**
+     * @var Piwik token
+     */
+    private $token;
+
+    /**
+     * @var UserService
+     */
+    private $userService;
+
+    /**
+     * PiwikTrackingListener constructor.
+     */
+    public function __construct(DocumentService $documentService, UserService $userService, ClientInterface $guzzle)
     {
         $this->documentService = $documentService;
         $this->userService = $userService;
         $this->guzzle = $guzzle;
     }
 
-    public function setConfig($idsite, $token, $documentFields, $piwiktrackerBaseurl, $configMonographDocumentType, $configPeriodicalDocumentType, $excludeIps)
-    {
-        $this->idsite = $idsite;
-        $this->token = $token;
-        $this->documentFields = $documentFields;
-        $this->piwiktrackerBaseurl = $piwiktrackerBaseurl;
-        $this->configMonographDocumentType = $configMonographDocumentType;
-        $this->configPeriodicalDocumentType = $configPeriodicalDocumentType;
-        $this->excludeIps = $excludeIps;
-    }
-
     /**
      * Tracks the data needed for generating COUNTER-Reports after a successful response.
-     *
-     * @param FilterResponseEvent $event
      */
     public function onKernelResponse(FilterResponseEvent $event)
     {
@@ -165,7 +148,7 @@ class PiwikTrackingListener
 
             foreach ($this->excludeIps as $key => $excludeIp) {
                 if (strstr($excludeIp, '-')) {
-                    list($lowerIP, $upperIP) = explode('-', $excludeIp, 2);
+                    [$lowerIP, $upperIP] = explode('-', $excludeIp, 2);
 
                     $lowerRange = ip2long($lowerIP);
                     $upperRange = ip2long($upperIP);
@@ -185,7 +168,7 @@ class PiwikTrackingListener
             }
         }
 
-        if ($passed === true) {
+        if ($passed) {
             $isResponseSuccessful = $event->getResponse()->isSuccessful();
 
             if ($isResponseSuccessful) {
@@ -194,12 +177,12 @@ class PiwikTrackingListener
                     $isThisASearchResult = explode('=', explode('?', $queryString)[0]);
                     $action = $event->getRequest()->get('_route');
 
-                    if (!empty($action) && ($action === '_detail' || $action === '_search' || $action === '_search_advanced' || $action === '_download_pdf')) {
+                    if (!empty($action) && ('_detail' === $action || '_search' === $action || '_search_advanced' === $action || '_download_pdf' === $action)) {
                         $piwikPing = false;
                         try {
                             $piwikPing = $this->guzzle->request('get');
 
-                            if ($piwikPing->getStatusCode() === 200) {
+                            if (200 === $piwikPing->getStatusCode()) {
                                 $piwikPing = true;
                             }
                         } catch (\Exception $e) {
@@ -212,14 +195,14 @@ class PiwikTrackingListener
                                 $idsiteStr = sprintf('idsite=%d', $this->idsite);
                                 $recStr = 'rec=1';
 
-                                if ($action === '_detail' || $action === '_download_pdf') {
+                                if ('_detail' === $action || '_download_pdf' === $action) {
                                     $documentFields = $this->documentFields;
                                     $id = $event->getRequest()->get('id');
                                     $isThisAPdfDownload = false;
                                     $pdfDocumentType = null;
                                     $documentId = null;
                                     $document = null;
-                                    if ($action === '_detail') {
+                                    if ('_detail' === $action) {
                                         $documentId = $id;
 
                                         if (strchr($id, '|')) {
@@ -236,7 +219,7 @@ class PiwikTrackingListener
                                                 $documentId,
                                                 $documentFields
                                         );
-                                    } elseif ($action === '_download_pdf') {
+                                    } elseif ('_download_pdf' === $action) {
                                         $pdfDocumentId = explode(':', $id);
                                         $workId = $pdfDocumentId[1];
 
@@ -259,11 +242,7 @@ class PiwikTrackingListener
 
                                     $page = $event->getRequest()->get('page');
 
-                                    if (isset($document->docstrct)) {
-                                        $documentType = $document->docstrct;
-                                    } else {
-                                        $documentType = $document->log_type[0];
-                                    }
+                                    $documentType = isset($document->docstrct) ? $document->docstrct : $document->log_type[0];
 
                                     if (isset($document->product)) {
                                         $product = $document->product;
@@ -273,20 +252,19 @@ class PiwikTrackingListener
                                             (isset($userIdentifier) && !empty($userIdentifier)) &&
                                             (isset($product) && !empty($product))
                                     ) {
-                                        if ($page === null) {
+                                        if (null === $page) {
                                             $searchFlag = false;
 
-                                            if (!empty($isThisASearchResult[1]) && str_replace(
+                                            if (!empty($isThisASearchResult[1]) && 'search' === str_replace(
                                                             '/',
                                                             '',
                                                             $isThisASearchResult[1]
-                                                    ) === 'search'
+                                                    )
                                             ) {
                                                 $searchFlag = str_replace('/', '', $isThisASearchResult[1]);
                                             }
 
                                             if (isset($documentType) && $documentType === $this->configMonographDocumentType && !isset($activeChapterId)) {
-
                                                 // Book Report 1 Tracking Identifier (br1 = Book Report 1)
                                                 $br1TrackingIdentifier = sprintf(
                                                         '%s:%s:%s',
@@ -329,7 +307,6 @@ class PiwikTrackingListener
                                                     $br1Promise->wait();
                                                 }
                                             } elseif (isset($documentType) && $documentType === $this->configPeriodicalDocumentType) {
-
                                                 // Journal Report 1 Tracking Identifier
                                                 $jr1TrackingIdentifier = sprintf(
                                                         '%s:%s:%s',
@@ -368,7 +345,7 @@ class PiwikTrackingListener
                                             if (!isset($activeChapterId)) {
                                                 $referer = $event->getRequest()->headers->get('referer');
                                                 $externalClick = false;
-                                                if ($referer !== null) {
+                                                if (null !== $referer) {
                                                     $refererHost = parse_url($referer)['host'];
                                                     $localHost = $event->getRequest()->getHost();
 
@@ -476,7 +453,6 @@ class PiwikTrackingListener
                                         }
 
                                         if (isset($activeChapterId) && !empty($activeChapterId) && isset($documentType) && $documentType === $this->configMonographDocumentType) {
-
                                             // Book Report 2 Tracking Identifier (br2 = Book Report 2)
                                             $br2TrackingIdentifier = sprintf(
                                                     '%s:%s:%s:%s',
@@ -513,7 +489,7 @@ class PiwikTrackingListener
                                             }
                                         }
                                     }
-                                } elseif ($action === '_search' || $action === '_search_advanced') {
+                                } elseif ('_search' === $action || '_search_advanced' === $action) {
                                     switch ($action) {
                                         case '_search':
                                             $collection = $event->getRequest()->get('collection');
@@ -523,8 +499,7 @@ class PiwikTrackingListener
                                             break;
                                     }
 
-                                    if (!empty($collection) && $collection !== 'all') {
-
+                                    if (!empty($collection) && 'all' !== $collection) {
                                         // Database Report 1 Regular Searches Tracking Identifier (dr1 = Database Report 1, RS = Regular Searches)
                                         $dr1SearchTrackingIdentifier = sprintf(
                                                 '%s:%s:%s',
@@ -605,5 +580,16 @@ class PiwikTrackingListener
                 }
             }
         }
+    }
+
+    public function setConfig($idsite, $token, $documentFields, $piwiktrackerBaseurl, $configMonographDocumentType, $configPeriodicalDocumentType, $excludeIps)
+    {
+        $this->idsite = $idsite;
+        $this->token = $token;
+        $this->documentFields = $documentFields;
+        $this->piwiktrackerBaseurl = $piwiktrackerBaseurl;
+        $this->configMonographDocumentType = $configMonographDocumentType;
+        $this->configPeriodicalDocumentType = $configPeriodicalDocumentType;
+        $this->excludeIps = $excludeIps;
     }
 }

@@ -14,6 +14,19 @@ use Doctrine\ORM\Mapping\Index;
 class User
 {
     /**
+     * @var string
+     *
+     * @ORM\Column(name="email", type="string", length=255)
+     */
+    private $email;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="endIpAddress", type="bigint")
+     */
+    private $endIpAddress;
+    /**
      * @var int
      *
      * @ORM\Column(name="id", type="integer")
@@ -25,16 +38,9 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="startIpAddress", type="bigint")
+     * @ORM\Column(name="identifier", type="string", length=10)
      */
-    private $startIpAddress;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="endIpAddress", type="bigint")
-     */
-    private $endIpAddress;
+    private $identifier;
 
     /**
      * @var string
@@ -53,16 +59,9 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="identifier", type="string", length=10)
+     * @ORM\Column(name="startIpAddress", type="bigint")
      */
-    private $identifier;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=255)
-     */
-    private $email;
+    private $startIpAddress;
 
     /**
      * @var string
@@ -72,51 +71,13 @@ class User
     private $zuid;
 
     /**
-     * Get id.
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set startIpAddress.
-     *
-     * @param string $startIpAddress
-     *
-     * @return User
-     */
-    public function setStartIpAddress($startIpAddress)
-    {
-        $this->startIpAddress = $startIpAddress;
-
-        return $this;
-    }
-
-    /**
-     * Get startIpAddress.
+     * Get email.
      *
      * @return string
      */
-    public function getStartIpAddress()
+    public function getEmail()
     {
-        return $this->startIpAddress;
-    }
-
-    /**
-     * Set endIpAddress.
-     *
-     * @param string $endIpAddress
-     *
-     * @return User
-     */
-    public function setEndIpAddress($endIpAddress)
-    {
-        $this->endIpAddress = $endIpAddress;
-
-        return $this;
+        return $this->email;
     }
 
     /**
@@ -130,17 +91,23 @@ class User
     }
 
     /**
-     * Set institution.
+     * Get id.
      *
-     * @param string $institution
-     *
-     * @return User
+     * @return int
      */
-    public function setInstitution($institution)
+    public function getId()
     {
-        $this->institution = $institution;
+        return $this->id;
+    }
 
-        return $this;
+    /**
+     * Get identifier.
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->identifier;
     }
 
     /**
@@ -154,20 +121,6 @@ class User
     }
 
     /**
-     * Set product.
-     *
-     * @param string $product
-     *
-     * @return User
-     */
-    public function setProduct($product)
-    {
-        $this->product = $product;
-
-        return $this;
-    }
-
-    /**
      * Get product.
      *
      * @return string
@@ -178,27 +131,23 @@ class User
     }
 
     /**
-     * Set identifier.
-     *
-     * @param string $identifier
-     *
-     * @return User
-     */
-    public function setIdentifier($identifier)
-    {
-        $this->identifier = $identifier;
-
-        return $this;
-    }
-
-    /**
-     * Get identifier.
+     * Get startIpAddress.
      *
      * @return string
      */
-    public function getIdentifier()
+    public function getStartIpAddress()
     {
-        return $this->identifier;
+        return $this->startIpAddress;
+    }
+
+    /**
+     * Get zuid.
+     *
+     * @return string
+     */
+    public function getZuid()
+    {
+        return $this->zuid;
     }
 
     /**
@@ -216,13 +165,73 @@ class User
     }
 
     /**
-     * Get email.
+     * Set endIpAddress.
      *
-     * @return string
+     * @param string $endIpAddress
+     *
+     * @return User
      */
-    public function getEmail()
+    public function setEndIpAddress($endIpAddress)
     {
-        return $this->email;
+        $this->endIpAddress = $endIpAddress;
+
+        return $this;
+    }
+
+    /**
+     * Set identifier.
+     *
+     * @param string $identifier
+     *
+     * @return User
+     */
+    public function setIdentifier($identifier)
+    {
+        $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    /**
+     * Set institution.
+     *
+     * @param string $institution
+     *
+     * @return User
+     */
+    public function setInstitution($institution)
+    {
+        $this->institution = $institution;
+
+        return $this;
+    }
+
+    /**
+     * Set product.
+     *
+     * @param string $product
+     *
+     * @return User
+     */
+    public function setProduct($product)
+    {
+        $this->product = $product;
+
+        return $this;
+    }
+
+    /**
+     * Set startIpAddress.
+     *
+     * @param string $startIpAddress
+     *
+     * @return User
+     */
+    public function setStartIpAddress($startIpAddress)
+    {
+        $this->startIpAddress = $startIpAddress;
+
+        return $this;
     }
 
     /**
@@ -237,15 +246,5 @@ class User
         $this->zuid = $zuid;
 
         return $this;
-    }
-
-    /**
-     * Get zuid.
-     *
-     * @return string
-     */
-    public function getZuid()
-    {
-        return $this->zuid;
     }
 }

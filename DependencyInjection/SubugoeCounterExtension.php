@@ -2,18 +2,25 @@
 
 namespace Subugoe\CounterBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Subugoe\CounterBundle\EventListener\PiwikTrackingListener;
+use Subugoe\CounterBundle\Service\ReportService;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
  *
- * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
+ * @see http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
 class SubugoeCounterExtension extends Extension
 {
+    public function getAlias()
+    {
+        return 'subugoe_counter';
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +35,7 @@ class SubugoeCounterExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
 
-        $reportServiceDefintion = $container->getDefinition('subugoe_counter.report_service');
+        $reportServiceDefintion = $container->getDefinition(ReportService::class);
         $reportServiceDefintion->addMethodCall('setConfig', [
                 $config['piwik_idsite'],
                 $config['piwik_token_auth'],
@@ -37,7 +44,7 @@ class SubugoeCounterExtension extends Extension
         ]
         );
 
-        $reportServiceDefintion = $container->getDefinition('subugoe_counter.mail_service');
+        $reportServiceDefintion = $container->getDefinition(\Subugoe\CounterBundle\Service\MailService::class);
         $reportServiceDefintion->addMethodCall('setConfig', [
                 $config['admin_email'],
                 $config['report_subject'],
@@ -52,7 +59,7 @@ class SubugoeCounterExtension extends Extension
         ]
         );
 
-        $trackingListenerDefintion = $container->getDefinition('subugoe_counter.tracking_listener');
+        $trackingListenerDefintion = $container->getDefinition(PiwikTrackingListener::class);
         $trackingListenerDefintion->addMethodCall('setConfig', [
                 $config['piwik_idsite'],
                 $config['piwik_token_auth'],
@@ -63,10 +70,5 @@ class SubugoeCounterExtension extends Extension
                 $config['exclude_ips'],
         ]
         );
-    }
-
-    public function getAlias()
-    {
-        return 'subugoe_counter';
     }
 }
