@@ -3,6 +3,7 @@
 namespace Subugoe\CounterBundle\Service;
 
 use Solarium\Client;
+use Solarium\QueryType\Select\Result\DocumentInterface;
 
 /**
  * Service for getting document data from solr index.
@@ -16,20 +17,18 @@ class DocumentService
 
     /**
      * DocumentService constructor.
-     *
-     * @param Client $client
      */
     public function __construct(Client $client)
     {
         $this->client = $client;
     }
 
-    /*
-     * Returns the already indexed products from solr server
+    /**
+     * Returns the already indexed products from solr server.
      *
      * @return array $products The product list
      */
-    public function getAvailableProducts()
+    public function getAvailableProducts(): array
     {
         $query = $this->client->createSelect();
         $query->setFields(['product']);
@@ -37,21 +36,14 @@ class DocumentService
         $query->addParam('group.field', 'product');
         $query->addParam('group.main', true);
         $resultset = $this->client->select($query)->getDocuments();
-        $products = array_column($resultset, 'product');
 
-        return $products;
+        return array_column($resultset, 'product');
     }
 
     /**
      * Returns the document data needed for tracking.
-     *
-     * @param string $searchStr
-     * @param string $id
-     * @param array  $documentFields
-     *
-     * @return \Solarium\QueryType\Select\Result\DocumentInterface
      */
-    public function getDocument($searchStr, $id, $documentFields)
+    public function getDocument(string $searchStr, string $id, array $documentFields): DocumentInterface
     {
         $select = $this->client->createSelect();
         $select->setQuery($searchStr.':'.$id);
