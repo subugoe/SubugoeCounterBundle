@@ -13,6 +13,6 @@
     },
     "require": {
         "swiftmailer/swiftmailer": "^5.4 || ^6.2",
-        "mewesk/twig-spreadsheet-bundle": "^1.1"
+        "technetium/twig-spreadsheet-bundle": "dev-master"
     }
 }
