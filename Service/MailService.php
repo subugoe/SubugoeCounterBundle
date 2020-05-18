@@ -2,8 +2,10 @@
 
 namespace Subugoe\CounterBundle\Service;
 
-use Symfony\Bundle\TwigBundle\TwigEngine;
-use Swift_Mailer;
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 
 /**
  * Service for sending generated counter reports.
@@ -11,78 +13,76 @@ use Swift_Mailer;
 class MailService
 {
     /**
-     * @var Swift_Mailer
+     * @var Mailer
      */
     protected $mailer;
 
     /**
-     * @var TwigEngine
-     */
-    protected $templating;
-
-    /*
      * @var string Admin E-mail
      */
     private $adminEmail;
 
-    /*
-     * @var string Report E-Mail subject
-     */
-    private $reportSubject;
-
-    /*
-     * @var string Report E-Mail body
-     */
-    private $reportBody;
-
-    /*
-     * @var string Reporting service start E-mail subject
-     */
-    private $reportingStartSubject;
-
-    /*
-     * @var string Reporting service start E-mail body
-     */
-    private $reportingStartBody;
-
-    /*
-     * @var string Reporting service end E-mail subject
-     */
-    private $reportingEndSubject;
-
-    /*
-     * @var string Reporting service end E-mail body
-     */
-    private $reportingEndBody;
-
-    /*
-     * @var string Number of reports sent
-     */
-    private $numberOfReportsSent;
-
-    /*
-     * @var string Cumulative Report E-Mail subject
-     */
-    private $cumulativeReportSubject;
-
-    /*
+    /**
      * @var string Cumulative Report E-Mail body
      */
     private $cumulativeReportBody;
 
     /**
-     * MailService constructor.
-     *
-     * @param Swift_Mailer $mailer
-     * @param TwigEngine   $templating
+     * @var string Cumulative Report E-Mail subject
      */
-    public function __construct(Swift_Mailer $mailer, TwigEngine $templating)
+    private $cumulativeReportSubject;
+
+    /**
+     * @var string Number of reports sent
+     */
+    private $numberOfReportsSent;
+
+    /**
+     * @var string Report E-Mail body
+     */
+    private $reportBody;
+
+    /**
+     * @var string Reporting service end E-mail body
+     */
+    private $reportingEndBody;
+
+    /**
+     * @var string Reporting service end E-mail subject
+     */
+    private $reportingEndSubject;
+
+    /**
+     * @var string Reporting service start E-mail body
+     */
+    private $reportingStartBody;
+
+    /**
+     * @var string Reporting service start E-mail subject
+     */
+    private $reportingStartSubject;
+
+    /**
+     * @var string Report E-Mail subject
+     */
+    private $reportSubject;
+
+    /**
+     * @var string
+     */
+    private $adminReportsSubject;
+
+    /**
+     * @var string
+     */
+    private $adminReportsBody;
+
+    public function __construct(MailerInterface $mailer)
     {
         $this->mailer = $mailer;
-        $this->templating = $templating;
     }
 
-    public function setConfig($adminEmail, $reportSubject, $reportBody, $reportingStartSubject, $reportingStartBody, $reportingEndSubject, $reportingEndBody, $numberOfReportsSent, $cumulativeReportSubject, $cumulativeReportBody)
+    public function setParameters(string $adminEmail, string $reportSubject, string $reportBody, string $reportingStartSubject, string $reportingStartBody, string $reportingEndSubject, string $reportingEndBody, string $numberOfReportsSent, string $cumulativeReportSubject, string $cumulativeReportBody, string $adminReportsSubject, string $adminReportsBody): void
     {
         $this->adminEmail = $adminEmail;
         $this->reportSubject = $reportSubject;
@@ -94,75 +94,101 @@ class MailService
         $this->numberOfReportsSent = $numberOfReportsSent;
         $this->cumulativeReportSubject = $cumulativeReportSubject;
         $this->cumulativeReportBody = $cumulativeReportBody;
+        $this->adminReportsSubject = $adminReportsSubject;
+        $this->adminReportsBody = $adminReportsBody;
     }
 
-    /*
-     * Informs the Admin of the start of report service via e-mail
-     */
-    public function informAdminStart()
+    public function dispatchAdminReports(?string $toUser, ?string $databaseReport1FileTarget, ?string $platformReport1FileTarget, string $institiution): void
     {
-        $adminMessageStart = \Swift_Message::newInstance();
-        $adminMessageStart->setSubject($this->reportingStartSubject);
-        $adminMessageStart->setFrom($this->adminEmail);
-        $adminMessageStart->setTo($this->adminEmail);
-        $adminMessageStart->setBody($this->reportingStartBody.' '.date('d.m-Y H:i:s'));
-        $this->mailer->send($adminMessageStart);
-    }
+        $message = new TemplatedEmail();
+        $message->subject($this->adminReportsSubject.' '.date('Y', strtotime('- 1 year')).': '.$institiution)
+            ->from($this->adminEmail)
+            ->to($toUser)
+            ->htmlTemplate('@SubugoeCounter/reports/emailbody.html.twig')
+            ->context([
+                'reportBody' => $this->adminReportsBody.' '.date('Y', strtotime('- 1 year')).': '.$institiution,
+            ]);
 
-    /*
-     * Informs the Admin of the end of report service via e-mail
-     *
-     * @param string $customersInformed The e-mail body
-     * @param integer $si The number of users informed
-     *
-     */
-    public function informAdminEnd($customersInformed, $i)
-    {
-        $adminMessageEnd = \Swift_Message::newInstance();
-        $adminMessageEnd->setSubject($this->reportingEndSubject);
-        $adminMessageEnd->setFrom($this->adminEmail);
-        $adminMessageEnd->setTo($this->adminEmail);
-        $adminMessageEnd->setBody($this->reportingEndBody.' '.date('d.m-Y H:i:s')."\r\n\r\n ".$this->numberOfReportsSent.' '.$i."\r\n\r\n".$customersInformed);
-        $this->mailer->send($adminMessageEnd);
-    }
+        $message->attachFromPath($platformReport1FileTarget);
 
-    /*
-     * Dispatches the generated reports via e-mail
-     *
-     * @param string $toAdmin The receiver e-mail address
-     * @param string $databaseReport1FileTarget The path to Database Report 1
-     * @param string $platformReport1FileTarget The path to Platform Report 1
-     */
-    public function dispatchReports($toUser, $databaseReport1FileTarget, $platformReport1FileTarget, $database, $platform)
-    {
-        $message = \Swift_Message::newInstance();
-        $message->setSubject($this->reportSubject.' '.date('Y', strtotime('- 1 year')));
-        $message->setFrom($this->adminEmail);
-        $message->setTo($toUser);
-        $message->setBody($this->templating->render('SubugoeCounterBundle:reports:emailbody.html.twig', ['reportBody' => $this->reportBody]), 'text/html');
-        if (1 === intval($database)) {
-            $message->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
-        }
-        if (1 === intval($platform)) {
-            $message->attach(\Swift_Attachment::fromPath($platformReport1FileTarget));
-        }
         $this->mailer->send($message);
     }
 
-    /*
-     * Dispatches the generated cumulative database report 1 via e-mail
+    /**
+     * Dispatches the generated cumulative database report 1 via e-mail.
      *
      * @param string $databaseReport1FileTarget The path to Database Report 1
-     *
      */
-    public function dispatchCumulativeDatabaseReport($databaseReport1FileTarget, $year)
+    public function dispatchCumulativeDatabaseReport(string $databaseReport1FileTarget, ?int $year): void
     {
-        $dispatchMessage = \Swift_Message::newInstance();
-        $dispatchMessage->setSubject($this->cumulativeReportSubject.' '.$year);
-        $dispatchMessage->setFrom($this->adminEmail);
-        $dispatchMessage->setTo($this->adminEmail);
-        $dispatchMessage->setBody($this->cumulativeReportBody.' '.$year.'.');
-        $dispatchMessage->attach(\Swift_Attachment::fromPath($databaseReport1FileTarget));
+        $dispatchMessage = new Email();
+        $dispatchMessage
+            ->subject($this->cumulativeReportSubject.' '.$year)
+            ->from($this->adminEmail)
+            ->to($this->adminEmail)
+            ->text($this->cumulativeReportBody.' '.$year.'.')
+            ->attachFromPath($databaseReport1FileTarget);
+
         $this->mailer->send($dispatchMessage);
+    }
+
+    /**
+     * Dispatches the generated reports via e-mail.
+     *
+     * @param string $toAdmin                   The receiver e-mail address
+     * @param string $databaseReport1FileTarget The path to Database Report 1
+     * @param string $platformReport1FileTarget The path to Platform Report 1
+     */
+    public function dispatchReports(?string $toUser, ?string $databaseReport1FileTarget, ?string $platformReport1FileTarget, $database, $platform): void
+    {
+        $message = new TemplatedEmail();
+        $message->subject($this->reportSubject.' '.date('Y', strtotime('- 1 year')))
+                ->from($this->adminEmail)
+                ->to($toUser)
+                ->htmlTemplate('@SubugoeCounter/reports/emailbody.html.twig')
+                ->context([
+                    'reportBody' => $this->reportBody,
+                ]);
+
+        if (1 === (int) $database) {
+            $message->attachFromPath($databaseReport1FileTarget);
+        }
+        if (1 === (int) $platform) {
+            $message->attachFromPath($platformReport1FileTarget);
+        }
+
+        $this->mailer->send($message);
+    }
+
+    /**
+     * Informs the Admin of the end of report service via e-mail.
+     *
+     * @param string $customersInformed The e-mail body
+     * @param int    $si                The number of users informed
+     */
+    public function informAdminEnd($customersInformed, $i): void
+    {
+        $adminMessageEnd = new Email();
+        $adminMessageEnd->subject($this->reportingEndSubject)
+                        ->from($this->adminEmail)
+                        ->to($this->adminEmail)
+                        ->text($this->reportingEndBody.' '.date('d.m-Y H:i:s')."\r\n\r\n ".$this->numberOfReportsSent.' '.$i."\r\n\r\n".$customersInformed);
+
+        $this->mailer->send($adminMessageEnd);
+    }
+
+    /**
+     * Informs the Admin of the start of report service via e-mail.
+     */
+    public function informAdminStart(): void
+    {
+        $adminMessageStart = new Email();
+        $adminMessageStart
+            ->subject($this->reportingStartSubject)
+            ->from($this->adminEmail)
+            ->to($this->adminEmail)
+            ->text($this->reportingStartBody.' '.date('d.m-Y H:i:s'));
+
+        $this->mailer->send($adminMessageStart);
     }
 }

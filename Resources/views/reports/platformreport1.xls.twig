@@ -59,39 +59,92 @@
             },
         },
     }%}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } },  } } %}Platform Report 1 (R4){% endxlscell %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Total Searches, Result Clicks and Record Views by Month and Platform{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ customer }}{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ customerIdentifier }}{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Period covered by report:{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ coveredPeriodStart }} to {{ coveredPeriodEnd }}{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}Date run:{% endxlscell %}
-        {% endxlsrow %}
-        {% xlsrow %}
-            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ "now"|date("Y-m-d") }}{% endxlscell %}
-        {% endxlsrow %}
+
+
+
+        {% set mergedStyleMeta = xlsmergestyles({ font: { size: '11' },
+            borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } },
+                right: { borderStyle: 'thin', color: { rgb: '000000' } } } }, []) %}
 
         {% xlsrow %}
-            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Platform{% endxlscell %}
-            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Publisher{% endxlscell %}
-            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}User Activity{% endxlscell %}
-            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}Reporting Period Total{% endxlscell %}
+            {% xlscell { 'style': mergedStyleMeta } %}Database Report 1 (R4){% endxlscell %}
+            {% xlscell { 'style': mergedStyleMeta } %}Total Searches, Result Clicks and Record Views by Month and Database{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}{{ customer }}{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}{{ customerIdentifier }}{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}Period covered by report:{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}{{ coveredPeriodStart }} to {{ coveredPeriodEnd }}{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}Date run:{% endxlscell %}
+        {% endxlsrow %}
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleMeta } %}{{ "now"|date("Y-m-d") }}{% endxlscell %}
+        {% endxlsrow %}
+
+
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } },  } } %}Platform Report 1 (R4){% endxlscell %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}Total Searches, Result Clicks and Record Views by Month and Platform{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ customer }}{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ customerIdentifier }}{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}Period covered by report:{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ coveredPeriodStart }} to {{ coveredPeriodEnd }}{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}Date run:{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+{#        {% xlsrow %}#}
+{#            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ "now"|date("Y-m-d") }}{% endxlscell %}#}
+{#        {% endxlsrow %}#}
+
+        {% set mergedStyleHeadings = xlsmergestyles({ font: { size: '11', bold: 'true' },
+            borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } },
+                right: { borderStyle: 'thin', color: { rgb: '000000' } },
+                top: { borderStyle: 'thin', color: { rgb: '000000' } } },
+            fill: { fillType: 'solid', color: { rgb: '95B3D6' } } }, []) %}
+
+        {% xlsrow %}
+            {% xlscell { 'style': mergedStyleHeadings } %}Platform{% endxlscell %}
+            {% xlscell { 'style': mergedStyleHeadings } %}Publisher{% endxlscell %}
+            {% xlscell { 'style': mergedStyleHeadings } %}User Activity{% endxlscell %}
+            {% xlscell { 'style': mergedStyleHeadings } %}Reporting Period Total{% endxlscell %}
+
+{#            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } }, fill: { fillType: 'solid', color: { rgb: '95B3D6' } } } } %}Platform{% endxlscell %}#}
+{#            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } }, top: { borderStyle: 'thin', color: { rgb: '000000' } } }, fill: { fillType: 'solid', color: { rgb: '95B3D6' } } } } %}Publisher{% endxlscell %}#}
+{#            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } }, top: { borderStyle: 'thin', color: { rgb: '000000' } } }, fill: { fillType: 'solid', color: { rgb: '95B3D6' } } } } %}User Activity{% endxlscell %}#}
+{#            {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } }, top: { borderStyle: 'thin', color: { rgb: '000000' } } }, fill: { fillType: 'solid', color: { rgb: '95B3D6' } } } } %}Reporting Period Total{% endxlscell %}#}
 
             {% for value in reportingPeriod %}
-                    {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } }, top: { style: 'thin', color: { rgb: '000000' } } }, fill: { type: 'solid', color: { rgb: '95B3D6' } } } } %}{{ value }}{% endxlscell %}
+                {% xlscell { 'style': mergedStyleHeadings } %}{{ value }}{% endxlscell %}
+{#                {% xlscell { style: { font: { size: '11', bold: 'true' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } }, top: { borderStyle: 'thin', color: { rgb: '000000' } } }, fill: { fillType: 'solid', color: { rgb: '95B3D6' } } } } %}{{ value }}{% endxlscell %}#}
             {% endfor %}
         {% endxlsrow %}
+
+
+
+
+        {% set mergedStyleData = xlsmergestyles({ font: { size: '11' },
+            borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } },
+                right: { borderStyle: 'thin', color: { rgb: '000000' } } } }, []) %}
+
+
+
 
         {% for key, value in platformreport1 %}
 
@@ -99,17 +152,36 @@
 
             {% for key1, value1 in value %}
                 {% xlsrow %}
-                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ platform }}{% endxlscell %}
-                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}SUB Göttingen{% endxlscell %}
-                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ key1 }}{% endxlscell %}
-                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}=SUM(E{{ 8 + x }}:P{{ 8 + x }}){% endxlscell %}
+
+                    {% xlscell { 'style': mergedStyleData } %}{{ platform }}{% endxlscell %}
+                    {% xlscell { 'style': mergedStyleData } %}SUB Göttingen{% endxlscell %}
+                    {% xlscell { 'style': mergedStyleData } %}{{ key1 }}{% endxlscell %}
+
+
+{#                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ platform }}{% endxlscell %}#}
+{#                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}SUB Göttingen{% endxlscell %}#}
+{#                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ key1 }}{% endxlscell %}#}
+
+                    {% if value1 is not empty %}
+                        {% set sum = 0 %}
+                        {% for key2, value2 in value1 %}
+                            {% set sum = sum + value2 %}
+                        {% endfor %}
+                    {% else %}
+                        {% set sum = 0 %}
+                    {% endif %}
+
+                    {% xlscell { 'style': mergedStyleData } %}{{ sum }}{% endxlscell %}
+{#                    {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ sum }}{% endxlscell %}#}
 
                     {% if value1 is not empty %}
                         {% for key2, value2 in value1 %}
-                            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}{{ value2 }}{% endxlscell %}
+                            {% xlscell { 'style': mergedStyleData } %}{{ value2 }}{% endxlscell %}
+{#                            {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}{{ value2 }}{% endxlscell %}#}
                         {% endfor %}
                     {% else %}
-                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { style: 'thin', color: { rgb: '000000' } }, right: { style: 'thin', color: { rgb: '000000' } } } } } %}0{% endxlscell %}
+                        {% xlscell { 'style': mergedStyleData } %}0{% endxlscell %}
+{#                        {% xlscell { style: { font: { size: '11' }, borders: { bottom: { borderStyle: 'thin', color: { rgb: '000000' } }, right: { borderStyle: 'thin', color: { rgb: '000000' } } } } } %}0{% endxlscell %}#}
                     {% endif %}
 
                     {% set x = x + 1 %}

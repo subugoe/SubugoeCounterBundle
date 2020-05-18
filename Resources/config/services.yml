@@ -1,31 +1,68 @@
 services:
-  subugoe_counter.report_service:
-    class: Subugoe\CounterBundle\Service\ReportService
-    arguments: ["@solarium.client", "@subugoe_counter.reporting_client", "@filesystem", "@templating", "@subugoe_counter.user_service", "@subugoe_counter.document_service"]
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    public: false       # Allows optimizing the container by removing unused services; this also means
+    # fetching services directly from the container via $container->get() won't work.
+    # The best practice is to be explicit about your dependencies anyway.
 
-  subugoe_counter.document_service:
-    class: Subugoe\CounterBundle\Service\DocumentService
-    arguments: ["@solarium.client"]
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  Subugoe\CounterBundle\:
+    resource: '../../*'
+    exclude: '../../{DependencyInjection,Entity,Resources,Tests,Kernel.php}'
 
-  subugoe_counter.user_service:
-    class: Subugoe\CounterBundle\Service\UserService
-    arguments: ["@doctrine", "@request_stack"]
+  # controllers are imported separately to make sure services can be injected
+  # as action arguments even if you don't extend any base controller class
+  Subugoe\CounterBundle\Controller\:
+    resource: '../../Controller'
+    tags: ['controller.service_arguments']
 
-  subugoe_counter.mail_service:
-    class: Subugoe\CounterBundle\Service\MailService
-    arguments: ["@mailer", "@templating"]
+  Subugoe\CounterBundle\Service\ReportService:
+    calls:
+      - method: 'setHttpClient'
+        arguments:
+          - '@eight_points_guzzle.client.piwikreporter'
+      - method: 'setParameters'
+        arguments:
+          - '%piwik_idsite%'
+          - '%piwik_token_auth%'
+          - '%platform%'
+          - '%counter_collections%'
+          - '%first_collection_group%'
 
-  subugoe_counter.tracking_listener:
-    class: Subugoe\CounterBundle\EventListener\PiwikTrackingListener
-    arguments: ["@subugoe_counter.document_service", "@subugoe_counter.user_service", "@subugoe_counter.tracking_client"]
-    tags:
-        - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+  Subugoe\CounterBundle\Service\MailService:
+    calls:
+      - method: 'setParameters'
+        arguments:
+          - '%admin_email%'
+          - '%report_subject%'
+          - '%report_body%'
+          - '%reporting_start_subject%'
+          - '%reporting_start_body%'
+          - '%reporting_end_subject%'
+          - '%reporting_end_body%'
+          - '%number_of_reports_sent%'
+          - '%cumulative_report_subject%'
+          - '%cumulative_report_body%'
+          - '%admin_reports_subject%'
+          - '%admin_reports_body%'
 
-  subugoe_counter.reporting_client:
-        class: GuzzleHttp\Client
-        arguments: [base_uri: "%piwikreporter_baseurl%"]
-
-  subugoe_counter.tracking_client:
-        class: GuzzleHttp\Client
-        arguments: [base_uri: "%piwiktracker_baseurl%"]
-
+#  subugoe_counter.tracking_listener:
+#    class: Subugoe\CounterBundle\EventListener\PiwikTrackingListener
+#    autoconfigure: true
+#    autowire: true
+#    tags:
+#        - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
+#    calls:
+#      - method: 'setParameters'
+#        arguments:
+#          - '%piwiktracker_baseurl%'
+#          - '%piwik_idsite%'
+#          - '%doc_type_monograph%'
+#          - '%doc_type_periodical%'
+#          - '%document_fields%'
+#          - '%exclude_ips_from_tracking%'
+#      - method: 'setHttpClient'
+#        arguments:
+#            - '@eight_points_guzzle.client.piwiktracker'

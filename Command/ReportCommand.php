@@ -1,15 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Subugoe\CounterBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Subugoe\CounterBundle\Controller\DefaultController;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Subugoe\CounterBundle\Controller\DefaultController;
-use Symfony\Component\Console\Input\InputArgument;
 
-class ReportCommand extends ContainerAwareCommand
+class ReportCommand extends Command
 {
+    /**
+     * @var DefaultController
+     */
+    private $defaultController;
+
+    public function __construct(DefaultController $defaultController)
+    {
+        parent::__construct();
+
+        $this->defaultController = $defaultController;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -18,7 +32,6 @@ class ReportCommand extends ContainerAwareCommand
         $this
             ->setName('app:generate:report')
             ->setDescription('Generate and dispatch counter reports.')
-
             ->addArgument('month', InputArgument::OPTIONAL, 'The end month of the report.')
             ->addArgument('year', InputArgument::OPTIONAL, 'The year for which the report is requested.')
             ->addArgument('database', InputArgument::OPTIONAL, 'Should Database Report 1 be dispached?')
@@ -30,10 +43,10 @@ class ReportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $month = $input->getArgument('month');
-        $year = $input->getArgument('year');
-        $database = $input->getArgument('database');
-        $platform = $input->getArgument('platform');
+        $month = (int) $input->getArgument('month');
+        $year = (int) $input->getArgument('year');
+        $database = intval($input->getArgument('database'));
+        $platform = intval($input->getArgument('platform'));
         $counterBeginYear = 2017;
 
         if (isset($month) && !in_array($month, range(1, 12))) {
@@ -41,15 +54,13 @@ class ReportCommand extends ContainerAwareCommand
             exit;
         }
 
-        if (!empty($year) && $counterBeginYear > $year || $year > date("Y")) {
-            $output->writeln('Error: Reporting year should be between '.$counterBeginYear.' and '.date("Y"));
+        if (!empty($year) && $counterBeginYear > $year || $year > date('Y')) {
+            $output->writeln('Error: Reporting year should be between '.$counterBeginYear.' and '.date('Y'));
             exit;
         }
 
         $output->writeln('Start generating and dispatching reports.');
-        $report = new DefaultController();
-        $report->setContainer($this->getContainer());
-        $report->reportGeneratingAndDispatchingAction($month, $year, $database, $platform);
+        $this->defaultController->reportGeneratingAndDispatchingAction($month, $year, $database, $platform);
         $output->writeln('Reports are generated and dispatched.');
     }
 }
