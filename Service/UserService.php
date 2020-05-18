@@ -22,9 +22,6 @@ class UserService
 
     /**
      * ReportService constructor.
-     *
-     * @param RegistryInterface $doctrine
-     * @param RequestStack      $request
      */
     public function __construct(RegistryInterface $doctrine, RequestStack $request)
     {
@@ -32,19 +29,18 @@ class UserService
         $this->request = $request;
     }
 
-    /*
-     * Returns the user identifier
+    /**
+     * Returns the user identifier.
      *
      * @Return string $identifier The user identifier
      */
-    public function getUserIdentifier()
+    public function getUserIdentifier(): string
     {
         $clientIp = $this->request->getMasterRequest()->getClientIp();
         $userRepository = $this->doctrine->getRepository('Subugoe\CounterBundle\Entity\User');
         $user = $userRepository->getUserIdentifier(ip2long($clientIp));
-        $identifier = $user['identifier'];
 
-        return $identifier;
+        return $user['identifier'];
     }
 
     /**
@@ -54,14 +50,13 @@ class UserService
      *
      * @return array $userProducts The user products
      */
-    public function getUserProducts($identifier)
+    public function getUserProducts(string $identifier): array
     {
         $userRepository = $this->doctrine->getRepository('Subugoe\CounterBundle\Entity\User');
         $userproducts = $userRepository->getUserProducts($identifier);
         $userproducts = array_unique($userproducts, SORT_REGULAR);
-        $userproducts = array_column($userproducts, 'product');
 
-        return $userproducts;
+        return array_column($userproducts, 'product');
     }
 
     /**
@@ -69,13 +64,12 @@ class UserService
      *
      * @return array $registeredUsers The list of all registered users
      */
-    public function getUsers()
+    public function getUsers(): array
     {
         $userRepository = $this->doctrine->getRepository('Subugoe\CounterBundle\Entity\User');
         $allUsersData = $userRepository->getUsers();
-        $registeredUsers = $this->getUniqueUsers($allUsersData);
 
-        return $registeredUsers;
+        return $this->getUniqueUsers($allUsersData);
     }
 
     /**
@@ -85,7 +79,7 @@ class UserService
      *
      * @return array $allUniqueUsers The unique list of all registered users
      */
-    protected function getUniqueUsers($allUsersData)
+    protected function getUniqueUsers(array $allUsersData): array
     {
         $allUniqueUsers = [];
         foreach ($allUsersData as $k => $userData) {

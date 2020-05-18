@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityRepository;
  */
 class UserRepository extends EntityRepository
 {
-    /*
-     * Returns the user's identifier
+    /**
+     * Returns the user's identifier.
      *
      * @param string $clientIp The user's client IP
      *
@@ -28,27 +28,11 @@ class UserRepository extends EntityRepository
             ->setParameter('clientIp', $clientIp)
             ->getQuery();
 
-        $identifier = $query->getOneOrNullResult();
-
-        return $identifier;
+        return $query->getOneOrNullResult();
     }
 
-    /*
-     * Returns all the users
-     *
-     * @return array $users The users
-     *
-     */
-    public function getUsers()
-    {
-        $query = $this->createQueryBuilder('u')->getQuery();
-        $users = $query->getResult();
-
-        return $users;
-    }
-
-    /*
-     * Returns user specific products
+    /**
+     * Returns user specific products.
      *
      * @param string $userIdentifier The user identifier
      *
@@ -62,8 +46,18 @@ class UserRepository extends EntityRepository
                 ->setParameter(1, $userIdentifier)
                 ->getQuery();
 
-        $products = $query->getResult();
+        return $query->getResult();
+    }
 
-        return $products;
+    /**
+     * Returns all the users.
+     *
+     * @return array $users The users
+     */
+    public function getUsers()
+    {
+        $query = $this->createQueryBuilder('u')->getQuery();
+
+        return $query->getResult();
     }
 }
