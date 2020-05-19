@@ -98,7 +98,7 @@ class MailService
         $this->adminReportsBody = $adminReportsBody;
     }
 
-    public function dispatchAdminReports(?string $toUser, ?string $databaseReport1FileTarget, ?string $platformReport1FileTarget, string $institiution): void
+    public function dispatchAdminReports(?string $toUser, ?string $platformReport1FileTarget, string $institiution): void
     {
         $message = new TemplatedEmail();
         $message->subject($this->adminReportsSubject.' '.date('Y', strtotime('- 1 year')).': '.$institiution)
