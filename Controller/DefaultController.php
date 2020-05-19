@@ -75,7 +75,7 @@ class DefaultController extends AbstractController
                 $platformReport1FileTarget = $this->reportService->generatePlatformReport1($userIdentifier, $reportsDir, key($data), $platformReport1data[$userIdentifier], $reportingPeriod, $coveredPeriodStart, $coveredPeriodEnd);
                 $repository = $this->getDoctrine()->getRepository('SubugoeCounterBundle:User');
                 $institiution = $repository->findOneByIdentifier($userIdentifier)->getInstitution();
-                $this->mailService->dispatchAdminReports($this->getParameter('admin_email'), $databaseReport1FileTarget, $platformReport1FileTarget, $institiution);
+                $this->mailService->dispatchAdminReports($this->getParameter('admin_email'), $platformReport1FileTarget, $institiution);
             }
         }
 
